@@ -2198,11 +2198,6 @@
             const month = now.getMonth();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-            let csvContent = "data:text/csv;charset=utf-8," +
-                `Farmer Monthly Report: ${f.name} (${now.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })})\n` +
-                `Rate per Fat: ${appState.costPerFat || 0}\n\n` +
-                "Date,Shift,Quantity (L),Fat (%),Amount (INR)\n";
-
             const ratePerFat = appState.costPerFat || 0;
             let csvContent = "data:text/csv;charset=utf-8,Date,Shift,Qty (L),Fat (%),Amount (₹)\n";
 
