@@ -2204,11 +2204,9 @@
                 "Date,Shift,Quantity (L),Fat (%),Amount (INR)\n";
 
             const ratePerFat = appState.costPerFat || 0;
+            let csvContent = "data:text/csv;charset=utf-8,Date,Shift,Qty (L),Fat (%),Amount (₹)\n";
 
-            // Since entries are already fetched in renderFarmerReport, we should probably reuse them or fetch again.
-            // For now, let's assume we need to fetch or use a local cache.
-            // Simplest is to fetch again if needed, but usually this is called after viewing.
-
+            apiFetch(`/entries/farmer/${f._id}`).then(entries => {
                 let totalQtyMonth = 0;
                 let totalAmtMonth = 0;
 
