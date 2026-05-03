@@ -1646,6 +1646,7 @@
                 appState.entries = entries;
                 renderHome();
                 renderCollection();
+                renderFarmers();
             } catch (err) {
                 console.error("Failed to refresh data", err);
             }
@@ -2275,14 +2276,20 @@
         async function toggleFarmer(id) {
             const f = appState.farmers.find(x => x._id === id);
             if (f) {
+                const originalState = f.active;
+                f.active = !f.active; // Optimistic update for speed
+                renderFarmers(); 
+
                 try {
                     await apiFetch(`/farmers/${id}`, {
                         method: 'PUT',
-                        body: JSON.stringify({ active: !f.active })
+                        body: JSON.stringify({ active: f.active })
                     });
                     await refreshData();
                 } catch (err) {
-                    alert(err.message);
+                    f.active = originalState; // Revert if failed
+                    renderFarmers();
+                    alert("Update failed: " + err.message);
                 }
             }
         }
