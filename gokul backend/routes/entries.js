@@ -72,4 +72,24 @@ router.get('/farmer/:farmerId', auth, async (req, res) => {
     }
 });
 
+// @route   PUT api/entries/:id
+// @desc    Update an entry
+router.put('/:id', auth, async (req, res) => {
+    const { qty, fat } = req.body;
+    try {
+        let entry = await Entry.findOne({ _id: req.params.id, user: req.user.id });
+        if (!entry) return res.status(404).json({ msg: 'Entry not found' });
+
+        if (qty !== undefined) entry.qty = qty;
+        if (fat !== undefined) entry.fat = fat;
+        entry.timestamp = Date.now();
+
+        await entry.save();
+        res.json(entry);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ msg: 'Server Error' });
+    }
+});
+
 module.exports = router;

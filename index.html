@@ -2159,11 +2159,12 @@
             if (isNaN(fatVal)) return alert("Please enter a valid number");
 
             try {
-                // We need more info to update an entry easily, but for now we can just send the same post with entry data
-                // Or I should add a PUT /api/entries/:id route. Let's add it to backend in next step or use existing POST
-                // Existing POST updates if date/shift/farmer matches.
-                // But we need the entry details. Let's just prompt for simplicity here.
-                alert("Please update fat during collection or via ledger (coming soon)");
+                await apiFetch(`/entries/${entryId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ fat: fatVal })
+                });
+                alert("Fat % updated successfully!");
+                renderLedger();
             } catch (err) {
                 alert(err.message);
             }
