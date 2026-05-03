@@ -1046,10 +1046,6 @@
                 <div style="display: flex; gap: 8px; align-items: center;">
                     <input type="date" id="ledger-date-filter" onchange="renderLedger()"
                         style="padding: 8px; border-radius: 8px; border: 1px solid var(--bg-page); font-size: 0.8rem; background: var(--bg-page);">
-                    <button class="edit-fat-btn" style="padding: 8px 12px; font-size: 0.8rem;"
-                        onclick="generateMonthlyMaster()">
-                        <i class="bi bi-calculator"></i>
-                    </button>
                 </div>
             </header>
 
@@ -1456,7 +1452,17 @@
                 full_name_placeholder: "Your full name",
                 mobile_placeholder: "10-digit mobile number",
                 email_placeholder: "you@example.com",
-                password_placeholder_signup: "Create a password (min 6 chars)"
+                password_placeholder_signup: "Create a password (min 6 chars)",
+                date: "Date",
+                farmer: "Farmer",
+                shift: "Shift",
+                qty: "Qty",
+                fat: "Fat",
+                amt: "Amount",
+                morning: "Morning",
+                evening: "Evening",
+                total: "Total",
+                avg: "Average"
             },
             hi: {
                 home: "होम",
@@ -1526,7 +1532,17 @@
                 full_name_placeholder: "आपका पूरा नाम",
                 mobile_placeholder: "10 अंकों का मोबाइल नंबर",
                 email_placeholder: "you@example.com",
-                password_placeholder_signup: "पासवर्ड बनाएं (कम से कम 6 अक्षर)"
+                password_placeholder_signup: "पासवर्ड बनाएं (कम से कम 6 अक्षर)",
+                date: "दिनांक",
+                farmer: "किसान",
+                shift: "शिफ्ट",
+                qty: "मात्रा",
+                fat: "फैट",
+                amt: "रकम",
+                morning: "सुबह",
+                evening: "शाम",
+                total: "कुल",
+                avg: "औसत"
             }
         };
 
@@ -1934,6 +1950,8 @@
         }
 
         async function renderLedger() {
+            const lang = appState.language || 'hi';
+            const dict = translations[lang];
             const body = document.getElementById('ledger-body');
             body.innerHTML = '';
 
@@ -1945,10 +1963,15 @@
                 const filtered = await apiFetch(`/entries?date=${dateFilter}`);
                 filtered.reverse().forEach(e => {
                     const row = document.createElement('tr');
+                    // Format date based on language
+                    const dateObj = new Date(e.date);
+                    const dateDisplay = dateObj.toLocaleDateString(lang === 'hi' ? 'hi-IN' : 'en-IN', { day: '2-digit', month: 'short' });
+                    const shiftDisplay = dict[e.shift] || e.shift;
+
                     row.innerHTML = `
-                        <td>${new Date(e.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}</td>
+                        <td>${dateDisplay}</td>
                         <td><b>${e.farmer ? e.farmer.name : 'Unknown'}</b></td>
-                        <td><span class="badge ${e.shift === 'morning' ? 'badge-m' : 'badge-e'}">${e.shift}</span></td>
+                        <td><span class="badge ${e.shift === 'morning' ? 'badge-m' : 'badge-e'}">${shiftDisplay}</span></td>
                         <td>${e.qty} L</td>
                         <td>
                             <span id="fat-val-${e._id}">${e.fat ? e.fat + '%' : '-'}</span>
@@ -1959,7 +1982,7 @@
                 });
 
                 if (filtered.length === 0) {
-                    body.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 40px;">No entries found for this date.</td></tr>';
+                    body.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 40px;">${lang === 'hi' ? 'कोई प्रविष्टि नहीं मिली' : 'No entries found'}</td></tr>`;
                 }
             } catch (err) {
                 console.error(err);
@@ -2053,15 +2076,17 @@
         }
 
         async function renderFarmerReport() {
+            const lang = appState.language || 'hi';
+            const dict = translations[lang];
             const f = appState.activeFarmer;
             if (!f) return;
 
             document.getElementById('report-farmer-name').innerText = f.name;
             const now = new Date();
-            const monthName = now.toLocaleDateString('en-IN', { month: 'short' });
             const year = now.getFullYear();
             const month = now.getMonth();
-            document.getElementById('report-month-year').innerText = now.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+            const monthName = now.toLocaleDateString(lang === 'hi' ? 'hi-IN' : 'en-IN', { month: 'short' });
+            document.getElementById('report-month-year').innerText = now.toLocaleDateString(lang === 'hi' ? 'hi-IN' : 'en-IN', { month: 'long', year: 'numeric' });
 
             const head = document.getElementById('farmer-report-matrix-head');
             const body = document.getElementById('farmer-report-matrix-body');
@@ -2069,11 +2094,11 @@
             // Header Row
             head.innerHTML = `
                 <tr>
-                    <th style="border: 1px solid #ddd; padding: 10px; background: #f8fafc; position: sticky; top: 0;">Date</th>
-                    <th style="border: 1px solid #ddd; padding: 10px; background: #f8fafc; position: sticky; top: 0;">Shift</th>
-                    <th style="border: 1px solid #ddd; padding: 10px; background: #f8fafc; position: sticky; top: 0;">Qty (L)</th>
-                    <th style="border: 1px solid #ddd; padding: 10px; background: #f8fafc; position: sticky; top: 0;">Fat (%)</th>
-                    <th style="border: 1px solid #ddd; padding: 10px; background: #f8fafc; position: sticky; top: 0;">Amt (₹)</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; background: #f8fafc; position: sticky; top: 0;">${dict.date}</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; background: #f8fafc; position: sticky; top: 0;">${dict.shift}</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; background: #f8fafc; position: sticky; top: 0;">${dict.qty} (L)</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; background: #f8fafc; position: sticky; top: 0;">${dict.fat} (%)</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; background: #f8fafc; position: sticky; top: 0;">${dict.amt} (₹)</th>
                 </tr>
             `;
             body.innerHTML = '';
@@ -2116,7 +2141,7 @@
 
                         row.innerHTML = `
                             <td style="border: 1px solid #ddd; padding: 8px; font-weight: 600;">${displayDate}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; font-size: 0.8rem; color: var(--text-sub); text-transform: capitalize;">${shift}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; font-size: 0.8rem; color: var(--text-sub); text-transform: capitalize;">${dict[shift] || shift}</td>
                             ${qtyCell}
                             ${fatCell}
                             ${costCell}
@@ -2234,21 +2259,23 @@
         }
 
         async function generateMonthlyMaster() {
+            const lang = appState.language || 'hi';
+            const dict = translations[lang];
             switchView('master-register');
             const head = document.getElementById('register-head');
             const body = document.getElementById('monthly-master-body');
 
             const activeFarmers = appState.farmers.filter(f => f.active);
-            if (activeFarmers.length === 0) return alert("No active farmers found.");
+            if (activeFarmers.length === 0) return alert(lang === 'hi' ? "कोई सक्रिय किसान नहीं मिला।" : "No active farmers found.");
 
             const now = new Date();
             const year = now.getFullYear();
             const month = now.getMonth();
-            const monthName = now.toLocaleDateString('en-IN', { month: 'short' });
+            const monthName = now.toLocaleDateString(lang === 'hi' ? 'hi-IN' : 'en-IN', { month: 'short' });
             const daysInMonth = new Date(year, month + 1, 0).getDate();
 
             // Create Headers (Dates)
-            let headerRow1 = `<tr><th rowspan="2" style="border: 1px solid #ddd; padding: 10px; background: #f8fafc; position: sticky; left: 0; z-index: 2;">Farmer Name</th>`;
+            let headerRow1 = `<tr><th rowspan="2" style="border: 1px solid #ddd; padding: 10px; background: #f8fafc; position: sticky; left: 0; z-index: 2;">${dict.farmer_name}</th>`;
             let headerRow2 = `<tr>`;
             
             for (let d = 1; d <= daysInMonth; d++) {
@@ -2259,15 +2286,7 @@
             headerRow2 += `</tr>`;
             head.innerHTML = headerRow1 + headerRow2;
 
-            // Fetch all entries for this month (for all farmers)
-            // Note: We'll just use the current month's entries if they were already loaded, 
-            // but for a full register, we should fetch the whole month.
             try {
-                // Fetching monthly data for everyone
-                const monthStart = `${year}-${String(month + 1).padStart(2, '0')}-01`;
-                // Simple approach: entries for each day might be too many requests.
-                // Better: Backend should have a "monthly summary" route.
-                // For now, we'll rely on the appState.entries (today) and maybe we should fetch the month.
                 const entries = await apiFetch(`/entries?month=${month + 1}&year=${year}`);
 
                 let bodyHtml = '';
@@ -2287,7 +2306,7 @@
                 body.innerHTML = bodyHtml;
             } catch (err) {
                 console.error(err);
-                alert("Failed to load monthly data");
+                alert(lang === 'hi' ? "मासिक डेटा लोड करने में विफल" : "Failed to load monthly data");
             }
         }
 
