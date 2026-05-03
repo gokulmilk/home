@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Gokul | Professional Milk Management</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            /* Light Theme */
+            --primary: #006D77;
+            --primary-rgb: 0, 109, 119;
+            --secondary: #83C5BE;
+            --bg-page: #F8FAFC;
+            --bg-card: #FFFFFF;
+            --text-main: #1E293B;
+            --text-sub: #64748B;
+            --accent: #E29578;
+            --success: #10B981;
+            --shadow-sm: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 25px -5px rgb(0 0 0 / 0.1);
+            --radius-xl: 32px;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --glass: rgba(255, 255, 255, 0.8);
+        }
+
+        [data-theme="dark"] {
+            --bg-page: #0F172A;
+            --bg-card: #1E293B;
+            --text-main: #F1F5F9;
+            --text-sub: #94A3B8;
+            --glass: rgba(30, 41, 59, 0.8);
+            --shadow-lg: 0 10px 25px -5px rgb(0 0 0 / 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+        }
+
+        body {
+            background: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.5s ease;
+        }
+
+        /* --- Layout & View System --- */
+        .app-container {
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+            padding-bottom: 100px;
+            /* Space for nav */
+        }
+
+        .view {
+            display: none;
+            padding: 24px 20px;
+            animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* --- Components --- */
+        .header-main {
+            padding: 20px 20px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .greeting h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .greeting p {
+            color: var(--text-sub);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .profile-trigger {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Progress Card (Milk Tank) */
+        .progress-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin: 0 20px 20px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(var(--primary-rgb), 0.1);
+        }
+
+        .tank-visual {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .qty-display-main {
+            background: rgba(var(--primary-rgb), 0.05);
+            padding: 16px 24px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .qty-display-main .val {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: block;
+            line-height: 1;
+        }
+
+        .qty-display-main .unit {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .tank-info h2 {
+            font-size: 1.4rem;
+            font-weight: 800;
+        }
+
+        .tank-info p {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            font-weight: 600;
+        }
+
+        /* Action Hub */
+        .action-hub {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 0 20px 24px;
+        }
+
+        .action-btn {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(var(--primary-rgb), 0.05);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+
+        .action-btn i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .action-btn span {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        /* Modern List */
+        .section-title {
+            padding: 0 20px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .section-title a {
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .list-container {
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .list-item {
+            background: var(--bg-card);
+            padding: 16px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .list-item .meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .list-item .icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(var(--primary-rgb), 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .list-item .details h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .list-item .details p {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        .list-item .val-badge {
+            background: var(--bg-page);
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .edit-fat-btn {
+            background: rgba(var(--primary-rgb), 0.1);
+            color: var(--primary);
+            border: none;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* --- Bottom Sheet --- */
+        .bottom-sheet-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .bottom-sheet {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-top-left-radius: 32px;
+            border-top-right-radius: 32px;
+            padding: 32px 24px;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 2001;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .bottom-sheet.active {
+            transform: translateY(0);
+        }
+
+        .bottom-sheet-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .sheet-handle {
+            width: 40px;
+            height: 4px;
+            background: rgba(var(--primary-rgb), 0.1);
+            border-radius: 2px;
+            margin: -16px auto 24px;
+        }
+
+        /* --- Custom Keypad for Bottom Sheet --- */
+        .sheet-qty-view {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .sheet-qty-view .val {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .sheet-qty-view .unit {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-sub);
+        }
+
+        .modern-keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .k-btn {
+            background: var(--bg-page);
+            border: none;
+            padding: 20px;
+            border-radius: 20px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        .k-btn:active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .k-btn.special {
+            background: rgba(var(--primary-rgb), 0.05);
+            color: var(--primary);
+        }
+
+        /* --- Bottom Nav --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0 24px;
+            border-top: 1px solid rgba(var(--primary-rgb), 0.05);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.7rem;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+
+        .nav-item i {
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item.active i {
+            transform: translateY(-4px) scale(1.1);
+        }
+
+        /* --- Table/Sheet View --- */
+        .ledger-table-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 400px;
+        }
+
+        th {
+            text-align: left;
+            padding: 16px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-sub);
+            border-bottom: 1px solid var(--bg-page);
+        }
+
+        td {
+            padding: 16px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--bg-page);
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 800;
+        }
+
+        .badge-m {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+
+        .badge-e {
+            background: #DBEAFE;
+            color: #2563EB;
+        }
+
+        /* Tabs for Collection */
+        .tab-group {
+            display: flex;
+            background: rgba(var(--primary-rgb), 0.05);
+            padding: 4px;
+            border-radius: 14px;
+            margin: 0 20px 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-sub);
+            background: transparent;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tab-btn.active {
+            background: var(--bg-card);
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Utility */
+        .btn-full {
+            width: 100%;
+            padding: 16px;
+            border-radius: 16px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-full:active {
+            transform: scale(0.98);
+        }
+
+        /* ---- AUTH SCREEN ---- */
+        .auth-wrapper {
+            min-height: 100vh;
+            display: none;
+            flex-direction: column;
+            background: linear-gradient(160deg, var(--primary) 0%, #004e57 55%, var(--bg-page) 55%);
+            padding-bottom: 40px;
+        }
+
+        .auth-wrapper.active {
+            display: flex;
+        }
+
+        /* --- Global Top Bar --- */
+        .top-brand-bar {
+            display: none;
+            padding: 14px 20px;
+            background: var(--bg-card);
+            border-bottom: 1px solid rgba(var(--primary-rgb), 0.08);
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .top-brand-bar .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .top-brand-bar .logo-sm {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+            box-shadow: 0 4px 10px rgba(var(--primary-rgb), 0.2);
+        }
+
+        .top-brand-bar .name {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        /* --- Settings & Profile Styles --- */
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 24px;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: 800;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .settings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .settings-item {
+            background: var(--bg-card);
+            padding: 18px 20px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .settings-item:active {
+            transform: scale(0.98);
+        }
+
+        .settings-item .info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .settings-item i {
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .settings-item span {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .settings-item.danger {
+            color: #EF4444;
+        }
+
+        .settings-item.danger i {
+            color: #EF4444;
+        }
+
+        .auth-brand {
+            padding: 56px 32px 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .auth-brand .logo-circle {
+            width: 76px;
+            height: 76px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 24px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.4rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .auth-brand h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .auth-brand p {
+            font-size: 0.88rem;
+            opacity: 0.82;
+            margin-top: 6px;
+        }
+
+        .auth-card {
+            background: var(--bg-card);
+            border-radius: 32px 32px 0 0;
+            padding: 32px 24px 40px;
+            flex: 1;
+            box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.12);
+            position: relative;
+        }
+
+        /* Tab switcher */
+        .auth-tabs {
+            display: flex;
+            background: var(--bg-page);
+            border-radius: 14px;
+            padding: 4px;
+            margin-bottom: 28px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 11px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            background: transparent;
+            color: var(--text-sub);
+        }
+
+        .auth-tab.active {
+            background: var(--bg-card);
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Form fields */
+        .auth-form {
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .auth-form.active {
+            display: flex;
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-sub);
+            letter-spacing: 0.3px;
+        }
+
+        .input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrap i.input-icon {
+            position: absolute;
+            left: 16px;
+            color: var(--text-sub);
+            font-size: 1rem;
+            pointer-events: none;
+        }
+
+        .input-wrap .toggle-pass {
+            position: absolute;
+            right: 14px;
+            background: none;
+            border: none;
+            color: var(--text-sub);
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 14px 16px 14px 44px;
+            border-radius: 14px;
+            border: 2px solid transparent;
+            background: var(--bg-page);
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-main);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .auth-input:focus {
+            border-color: var(--primary);
+            background: rgba(var(--primary-rgb), 0.04);
+        }
+
+        .auth-input.has-toggle {
+            padding-right: 48px;
+        }
+
+        .auth-divider {
+            text-align: center;
+            font-size: 0.78rem;
+            color: var(--text-sub);
+            font-weight: 600;
+            margin: 4px 0;
+        }
+
+        .auth-link-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .btn-full-gradient {
+            width: 100%;
+            padding: 17px;
+            border-radius: 16px;
+            border: none;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.35);
+            letter-spacing: 0.3px;
+        }
+
+        .btn-full-gradient:active {
+            transform: scale(0.97);
+            box-shadow: none;
+        }
+
+        .auth-footer-text {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            margin-top: 8px;
+        }
+    </style>
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <!-- Global Branded Top Bar -->
+        <div id="global-brand-bar" class="top-brand-bar">
+            <div class="brand">
+                <div class="logo-sm">🥛</div>
+                <span class="name">Gokul</span>
+            </div>
+            <div id="top-bar-action" class="profile-trigger" onclick="switchView('profile')"
+                style="width: 36px; height: 36px; border-radius: 10px; background: var(--bg-page); color: var(--primary); box-shadow: none; font-size: 1.2rem;">
+                <i id="top-bar-icon" class="bi bi-person-circle"></i>
+            </div>
+        </div>
+
+        <!-- AUTH VIEW (Login + Signup) -->
+        <div id="view-login" class="auth-wrapper active">
+            <!-- Brand Header -->
+            <div class="auth-brand">
+                <div class="logo-circle">🥛</div>
+                <h1>Gokul</h1>
+                <p>The Smart Choice for Smart Milkmen</p>
+            </div>
+
+            <!-- Auth Card -->
+            <div class="auth-card">
+                <!-- Tab Switcher -->
+                <div class="auth-tabs">
+                    <button class="auth-tab active" id="tab-login-btn" onclick="switchAuthTab('login')">Login</button>
+                    <button class="auth-tab" id="tab-signup-btn" onclick="switchAuthTab('signup')">Sign Up</button>
+                </div>
+
+                <!-- LOGIN FORM -->
+                <form class="auth-form active" id="form-login" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label>Mobile Number or Email</label>
+                        <div class="input-wrap">
+                            <i class="bi bi-person-fill input-icon"></i>
+                            <input type="text" id="login-identifier" class="auth-input"
+                                placeholder="Enter mobile or email" autocomplete="username" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <div class="input-wrap">
+                            <i class="bi bi-lock-fill input-icon"></i>
+                            <input type="password" id="login-password" class="auth-input has-toggle"
+                                placeholder="Enter your password" autocomplete="current-password" required>
+                            <button type="button" class="toggle-pass" onclick="togglePass('login-password', this)"><i
+                                    class="bi bi-eye"></i></button>
+                        </div>
+                    </div>
+                    <div class="auth-footer-text" style="margin-top:-4px;">
+                        <button type="button" class="auth-link-btn">Forgot Password?</button>
+                    </div>
+                    <button type="submit" class="btn-full-gradient" style="margin-top:8px;">Login <i
+                            class="bi bi-arrow-right-circle-fill"></i></button>
+                    <div class="auth-divider">Don't have an account? <button type="button" class="auth-link-btn"
+                            onclick="switchAuthTab('signup')">Sign Up</button></div>
+                </form>
+
+                <!-- SIGNUP FORM -->
+                <form class="auth-form" id="form-signup" onsubmit="handleSignup(event)">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <div class="input-wrap">
+                            <i class="bi bi-person-badge-fill input-icon"></i>
+                            <input type="text" id="signup-name" class="auth-input" placeholder="Your full name"
+                                autocomplete="name" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Mobile Number</label>
+                        <div class="input-wrap">
+                            <i class="bi bi-telephone-fill input-icon"></i>
+                            <input type="tel" id="signup-mobile" class="auth-input" placeholder="10-digit mobile number"
+                                maxlength="10" pattern="[0-9]{10}" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <div class="input-wrap">
+                            <i class="bi bi-envelope-fill input-icon"></i>
+                            <input type="email" id="signup-email" class="auth-input" placeholder="you@example.com"
+                                autocomplete="email" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <div class="input-wrap">
+                            <i class="bi bi-shield-lock-fill input-icon"></i>
+                            <input type="password" id="signup-password" class="auth-input has-toggle"
+                                placeholder="Create a password (min 6 chars)" minlength="6" autocomplete="new-password"
+                                required>
+                            <button type="button" class="toggle-pass" onclick="togglePass('signup-password', this)"><i
+                                    class="bi bi-eye"></i></button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-full-gradient" style="margin-top:8px;">Create Account <i
+                            class="bi bi-check-circle-fill"></i></button>
+                    <div class="auth-divider">Already have an account? <button type="button" class="auth-link-btn"
+                            onclick="switchAuthTab('login')">Login</button></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- HOME VIEW -->
+        <div id="view-home" class="view">
+            <header class="header-main">
+                <div class="greeting">
+                    <p id="live-date">May 2, 2026</p>
+                    <h1 id="greeting-msg">Good Morning!</h1>
+                </div>
+            </header>
+
+            <div class="progress-card">
+                <div class="tank-visual">
+                    <div class="qty-display-main">
+                        <span class="val" id="home-total-qty">0.0</span>
+                        <span class="unit">Litres</span>
+                    </div>
+                    <div class="tank-info">
+                        <p>TODAY'S COLLECTION</p>
+                        <h2 id="home-total-status">Good Progress!</h2>
+                        <p id="home-collection-count">0 of 0 Farmers Done</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-hub">
+                <div class="action-btn" onclick="switchView('collection')">
+                    <i class="bi bi-plus-circle-fill"></i>
+                    <span>Collection</span>
+                </div>
+                <div class="action-btn" onclick="switchView('farmers')">
+                    <i class="bi bi-people-fill"></i>
+                    <span>Manage</span>
+                </div>
+            </div>
+
+            <div class="section-title">
+                <h3>Recent Activity</h3>
+                <a href="#" onclick="switchView('ledger')">See All</a>
+            </div>
+
+            <div class="list-container" id="recent-list">
+                <!-- Dynamic Items -->
+            </div>
+        </div>
+
+        <!-- COLLECTION VIEW -->
+        <div id="view-collection" class="view">
+            <header class="header-main" style="padding: 20px 0;">
+                <div class="greeting">
+                    <h1>Collection</h1>
+                    <p id="collection-meta">Morning Shift | May 2</p>
+                </div>
+                <div
+                    style="background: var(--bg-card); padding: 6px; border-radius: 14px; display: flex; box-shadow: var(--shadow-sm);">
+                    <button class="tab-btn active" id="coll-shift-m" onclick="updateShift('morning')"
+                        style="padding: 6px 12px; font-size: 0.75rem;">Morning</button>
+                    <button class="tab-btn" id="coll-shift-e" onclick="updateShift('evening')"
+                        style="padding: 6px 12px; font-size: 0.75rem;">Evening</button>
+                </div>
+            </header>
+
+            <div class="tab-group">
+                <button class="tab-btn active" id="tab-remaining"
+                    onclick="setCollectionFilter('remaining')">Remaining</button>
+                <button class="tab-btn" id="tab-done" onclick="setCollectionFilter('done')">Completed</button>
+            </div>
+
+            <div class="list-container" id="collection-list">
+                <!-- Dynamic Items -->
+            </div>
+        </div>
+
+        <!-- LEDGER VIEW (The Sheet) -->
+        <div id="view-ledger" class="view">
+            <header class="header-main" style="padding: 20px 0;">
+                <div class="greeting">
+                    <h1>Ledger Sheet</h1>
+                    <p>Daily Records & Reports</p>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <input type="date" id="ledger-date-filter" onchange="renderLedger()"
+                        style="padding: 8px; border-radius: 8px; border: 1px solid var(--bg-page); font-size: 0.8rem; background: var(--bg-page);">
+                    <button class="edit-fat-btn" style="padding: 8px 12px; font-size: 0.8rem;"
+                        onclick="generateMonthly()">
+                        <i class="bi bi-calculator"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div class="ledger-table-card">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Farmer</th>
+                                <th>Shift</th>
+                                <th>Qty (L)</th>
+                                <th>Fat %</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ledger-body">
+                            <!-- Rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- FARMERS VIEW -->
+        <div id="view-farmers" class="view">
+            <header class="header-main" style="padding: 20px 0;">
+                <div class="greeting">
+                    <h1>Farmers</h1>
+                    <p>Manage Master List</p>
+                </div>
+                <button class="profile-trigger" onclick="openSheet('sheet-add-farmer')">
+                    <i class="bi bi-plus-lg"></i>
+                </button>
+            </header>
+
+            <!-- Global Rate Setting -->
+            <div class="progress-card" style="margin: 0 20px 24px; padding: 20px; background: rgba(var(--primary-rgb), 0.03); border: 1px solid rgba(var(--primary-rgb), 0.1); border-radius: 20px;">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--primary);">Rate Setting</h4>
+                        <p style="font-size: 0.7rem; color: var(--text-sub);">Cost per 1.0 Fat (%)</p>
+                    </div>
+                    <div class="input-wrap" style="width: 120px;">
+                        <input type="number" id="global-cost-per-fat" class="auth-input" style="padding: 10px; text-align: center; border: 2px solid var(--primary);" placeholder="0.00" onchange="updateGlobalRate()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="list-container" id="master-farmer-list">
+                <!-- Dynamic -->
+            </div>
+        </div>
+
+        <!-- FARMER REPORT VIEW -->
+        <div id="view-farmer-report" class="view">
+            <header class="header-main" style="padding: 20px 0;">
+                <button onclick="switchView('farmers')"
+                    style="background: none; border: none; font-size: 1.5rem; color: var(--primary); cursor: pointer; padding: 0 10px 0 0;">
+                    <i class="bi bi-arrow-left"></i>
+                </button>
+                <div class="greeting">
+                    <h1 id="report-farmer-name">Farmer Report</h1>
+                    <p id="report-month-year">Monthly Statement</p>
+                </div>
+            </header>
+
+            <div class="progress-card" style="margin: 0 0 20px;">
+                <div
+                    style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; text-align: center; margin-bottom: 16px;">
+                    <div>
+                        <p style="font-size: 0.6rem; color: var(--text-sub); font-weight: 700;">TOTAL LITRES</p>
+                        <h2 id="report-total-qty" style="color: var(--primary); font-size: 1.2rem;">0.0</h2>
+                    </div>
+                    <div>
+                        <p style="font-size: 0.6rem; color: var(--text-sub); font-weight: 700;">AVG FAT %</p>
+                        <h2 id="report-avg-fat" style="color: var(--accent); font-size: 1.2rem;">0.0</h2>
+                    </div>
+                    <div>
+                        <p style="font-size: 0.6rem; color: var(--text-sub); font-weight: 700;">TOTAL PAYOUT</p>
+                        <h2 id="report-total-cost" style="color: #1D6F42; font-size: 1.2rem;">₹0</h2>
+                    </div>
+                </div>
+                <button class="btn-full" onclick="exportFarmerCSV()"
+                    style="padding: 12px; font-size: 0.85rem; background: #1D6F42;">
+                    Export to Excel <i class="bi bi-file-earmark-excel-fill"></i>
+                </button>
+            </div>
+
+            <div class="ledger-table-card" style="border: 1px solid #ddd;">
+                <div class="table-responsive" style="overflow-x: auto;">
+                    <table style="min-width: 1200px; border-collapse: collapse; text-align: center;"
+                        id="farmer-report-matrix">
+                        <tbody id="farmer-report-matrix-body">
+                            <!-- Rows built dynamically: Day, Time, Qty, Fat -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROFILE VIEW -->
+        <div id="view-profile" class="view">
+            <header class="header-main" style="padding: 20px 0;">
+                <div class="greeting">
+                    <h1>Your Profile</h1>
+                    <p>Manage your account settings</p>
+                </div>
+            </header>
+            <div style="text-align: center; margin-bottom: 24px;">
+                <div class="profile-avatar" id="profile-initials">U</div>
+                <p
+                    style="color: var(--text-sub); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+                    Edit Profile</p>
+            </div>
+
+            <div class="auth-form active" style="gap: 20px;">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <div class="input-wrap">
+                        <i class="bi bi-person-fill input-icon"></i>
+                        <input type="text" id="edit-profile-name" class="auth-input" placeholder="Your Name">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <div class="input-wrap">
+                        <i class="bi bi-envelope-fill input-icon"></i>
+                        <input type="email" id="edit-profile-email" class="auth-input" placeholder="Your Email">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Mobile Number</label>
+                    <div class="input-wrap">
+                        <i class="bi bi-telephone-fill input-icon"></i>
+                        <input type="tel" id="edit-profile-mobile" class="auth-input" placeholder="Your Mobile"
+                            maxlength="10">
+                    </div>
+                </div>
+
+                <button class="btn-full-gradient" onclick="updateProfile()" style="margin-top: 12px;">Save Changes <i
+                        class="bi bi-check-circle"></i></button>
+
+                <div class="settings-item danger" onclick="handleLogout()"
+                    style="margin-top: 20px; border: 1px solid rgba(239, 68, 68, 0.1);">
+                    <div class="info">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Logout from Account</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS VIEW -->
+        <div id="view-settings" class="view">
+            <header class="header-main" style="padding: 20px 0;">
+                <button onclick="switchView('profile')"
+                    style="background: none; border: none; font-size: 1.5rem; color: var(--primary); cursor: pointer; padding: 0 10px 0 0;">
+                    <i class="bi bi-arrow-left"></i>
+                </button>
+                <div class="greeting">
+                    <h1>Settings</h1>
+                    <p>App preferences</p>
+                </div>
+            </header>
+
+            <div class="settings-list">
+                <div class="settings-item" onclick="toggleTheme()">
+                    <div class="info">
+                        <i class="bi bi-palette-fill"></i>
+                        <span>Dark Mode</span>
+                    </div>
+                    <div class="switch-box">
+                        <i class="bi bi-toggle-off" id="settings-theme-toggle"
+                            style="font-size: 1.8rem; color: var(--text-sub);"></i>
+                    </div>
+                </div>
+                <div class="settings-item">
+                    <div class="info">
+                        <i class="bi bi-bell-fill"></i>
+                        <span>Notifications</span>
+                    </div>
+                    <i class="bi bi-toggle-on" style="font-size: 1.8rem; color: var(--primary);"></i>
+                </div>
+                <div class="settings-item">
+                    <div class="info">
+                        <i class="bi bi-translate"></i>
+                        <span>Language</span>
+                    </div>
+                    <span style="font-size: 0.8rem; color: var(--text-sub); font-weight: 700;">English</span>
+                </div>
+                <div class="settings-item">
+                    <div class="info">
+                        <i class="bi bi-shield-lock-fill"></i>
+                        <span>Security & Privacy</span>
+                    </div>
+                    <i class="bi bi-chevron-right" style="font-size: 0.8rem; color: var(--text-sub);"></i>
+                </div>
+                <div class="settings-item">
+                    <div class="info">
+                        <i class="bi bi-question-circle-fill"></i>
+                        <span>Help Center</span>
+                    </div>
+                    <i class="bi bi-chevron-right" style="font-size: 0.8rem; color: var(--text-sub);"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM NAV -->
+        <nav class="bottom-nav" id="app-nav" style="display: none;">
+            <a href="#" class="nav-item active" onclick="switchView('home')">
+                <i class="bi bi-house-door-fill"></i>
+                <span>Home</span>
+            </a>
+            <a href="#" class="nav-item" onclick="switchView('collection')">
+                <i class="bi bi-plus-square-fill"></i>
+                <span>Entry</span>
+            </a>
+            <a href="#" class="nav-item" onclick="switchView('ledger')">
+                <i class="bi bi-file-earmark-spreadsheet-fill"></i>
+                <span>Ledger</span>
+            </a>
+            <a href="#" class="nav-item" onclick="switchView('farmers')">
+                <i class="bi bi-people-fill"></i>
+                <span>Farmers</span>
+            </a>
+        </nav>
+
+        <!-- --- OVERLAYS & SHEETS --- -->
+
+        <div class="bottom-sheet-overlay" id="sheet-overlay" onclick="closeSheets()"></div>
+
+        <!-- Collection Entry Sheet -->
+        <div class="bottom-sheet" id="sheet-entry">
+            <div class="sheet-handle"></div>
+            <div style="text-align: center; margin-bottom: 24px;">
+                <h3 id="sheet-farmer-name" style="font-size: 1.4rem; font-weight: 800;">Farmer Name</h3>
+                <p style="font-size: 0.85rem; color: var(--text-sub); font-weight: 600;" id="sheet-farmer-meta">Morning
+                    Shift</p>
+            </div>
+
+            <div class="sheet-qty-view">
+                <span class="val" id="display-qty">0</span>
+                <span class="unit">Litre</span>
+            </div>
+
+            <div class="modern-keypad">
+                <button class="k-btn" onclick="kPress('1')">1</button>
+                <button class="k-btn" onclick="kPress('2')">2</button>
+                <button class="k-btn" onclick="kPress('3')">3</button>
+                <button class="k-btn" onclick="kPress('4')">4</button>
+                <button class="k-btn" onclick="kPress('5')">5</button>
+                <button class="k-btn" onclick="kPress('6')">6</button>
+                <button class="k-btn" onclick="kPress('7')">7</button>
+                <button class="k-btn" onclick="kPress('8')">8</button>
+                <button class="k-btn" onclick="kPress('9')">9</button>
+                <button class="k-btn special" onclick="kPress('.')">.</button>
+                <button class="k-btn" onclick="kPress('0')">0</button>
+                <button class="k-btn special" onclick="kPress('DEL')"><i class="bi bi-backspace"></i></button>
+            </div>
+
+            <div style="display: flex; gap: 12px; margin-bottom: 24px;">
+                <button class="k-btn special" style="flex: 1; padding: 12px;" onclick="qtyAdjust(-0.25)">-0.25</button>
+                <button class="k-btn special" style="flex: 1; padding: 12px;" onclick="qtyAdjust(0.25)">+0.25</button>
+            </div>
+
+            <button class="btn-full" onclick="confirmEntry()"
+                style="padding: 20px; font-size: 1.1rem; box-shadow: var(--shadow-lg);">
+                Save Collection <i class="bi bi-check-lg"></i>
+            </button>
+        </div>
+
+        <!-- Add Farmer Sheet -->
+        <div class="bottom-sheet" id="sheet-add-farmer">
+            <div class="sheet-handle"></div>
+            <h2 style="margin-bottom: 24px; text-align: center;">New Farmer</h2>
+
+            <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px;">
+                <div>
+                    <label style="font-size: 0.8rem; font-weight: 700; display: block; margin-bottom: 6px;">Farmer
+                        Name</label>
+                    <input type="text" id="add-f-name" placeholder="Full Name"
+                        style="width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--bg-page); background: var(--bg-page); outline: none;">
+                </div>
+            </div>
+
+            <button class="btn-full" onclick="saveNewFarmer()">Add to Master List</button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Core State ---
+        let appState = {
+            currentUser: null,
+            currentShift: 'morning',
+            farmers: [],
+            entries: [],
+            collFilter: 'remaining',
+            tempQty: "0",
+            activeFarmer: null,
+            costPerFat: 0
+        };
+
+        const STORAGE_KEY = 'dm_pro_data';
+
+        // --- Init ---
+        function init() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (savedData) {
+                const parsed = JSON.parse(savedData);
+                appState.farmers = parsed.farmers || [];
+                appState.entries = parsed.entries || [];
+                appState.costPerFat = parsed.costPerFat || 0;
+            } else {
+                // Initial Seed
+                appState.farmers = [
+                    { id: 1, name: 'Arjun Singh', fat: 5.2, active: true },
+                    { id: 2, name: 'Sohan Lal', fat: 4.5, active: true },
+                    { id: 3, name: 'Deepak Kumar', fat: 4.8, active: true }
+                ];
+                saveData();
+            }
+
+            // Set global rate input
+            const rateInput = document.getElementById('global-cost-per-fat');
+            if (rateInput) rateInput.value = appState.costPerFat;
+
+            const session = sessionStorage.getItem('dm_pro_session');
+            if (session) {
+                appState.currentUser = JSON.parse(session);
+                showMainApp(true); // Immediate hide of login
+            }
+
+            updateClock();
+            autoShift();
+
+            // Set ledger filter to today by default
+            const ledgerDate = document.getElementById('ledger-date-filter');
+            if (ledgerDate) ledgerDate.value = getTodayKey();
+        }
+
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                farmers: appState.farmers,
+                entries: appState.entries,
+                costPerFat: appState.costPerFat
+            }));
+        }
+
+        function updateGlobalRate() {
+            const val = parseFloat(document.getElementById('global-cost-per-fat').value);
+            appState.costPerFat = isNaN(val) ? 0 : val;
+            saveData();
+            alert("Global rate updated!");
+        }
+
+        // --- Auth ---
+        const USERS_KEY = 'dm_users';
+
+        function getUsers() {
+            return JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem(USERS_KEY, JSON.stringify(users));
+        }
+
+        function switchAuthTab(tab) {
+            const isLogin = tab === 'login';
+            document.getElementById('tab-login-btn').classList.toggle('active', isLogin);
+            document.getElementById('tab-signup-btn').classList.toggle('active', !isLogin);
+            document.getElementById('form-login').classList.toggle('active', isLogin);
+            document.getElementById('form-signup').classList.toggle('active', !isLogin);
+        }
+
+        function togglePass(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'bi bi-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'bi bi-eye';
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const identifier = document.getElementById('login-identifier').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            const users = getUsers();
+            const user = users.find(u =>
+                (u.mobile === identifier || u.email === identifier.toLowerCase()) &&
+                u.password === password
+            );
+
+            if (!user) {
+                showAuthError('login-password', 'Invalid credentials. Please try again or sign up.');
+                return;
+            }
+
+            appState.currentUser = { name: user.name, mobile: user.mobile, email: user.email };
+            sessionStorage.setItem('dm_pro_session', JSON.stringify(appState.currentUser));
+            showMainApp();
+            alert(`Welcome back, ${user.name}!`);
+        }
+
+        function handleSignup(e) {
+            e.preventDefault();
+            const name = document.getElementById('signup-name').value.trim();
+            const mobile = document.getElementById('signup-mobile').value.trim();
+            const email = document.getElementById('signup-email').value.trim().toLowerCase();
+            const pass = document.getElementById('signup-password').value;
+
+            if (mobile.length !== 10 || !/^\d{10}$/.test(mobile)) {
+                showAuthError('signup-mobile', 'Please enter a valid 10-digit mobile number.');
+                return;
+            }
+
+            const users = getUsers();
+            if (users.find(u => u.mobile === mobile || u.email === email)) {
+                showAuthError('signup-email', 'An account with this mobile or email already exists.');
+                return;
+            }
+
+            users.push({ name, mobile, email, password: pass });
+            saveUsers(users);
+
+            appState.currentUser = { name, mobile, email };
+            sessionStorage.setItem('dm_pro_session', JSON.stringify(appState.currentUser));
+            showMainApp();
+        }
+
+        function showAuthError(inputId, msg) {
+            const input = document.getElementById(inputId);
+            input.style.borderColor = '#EF4444';
+            input.focus();
+            // Remove any old error
+            const old = input.parentElement.parentElement.querySelector('.auth-error-msg');
+            if (old) old.remove();
+            // Add error
+            const err = document.createElement('p');
+            err.className = 'auth-error-msg';
+            err.style.cssText = 'color:#EF4444; font-size:0.78rem; font-weight:600; margin-top:-4px;';
+            err.textContent = msg;
+            input.parentElement.parentElement.appendChild(err);
+            setTimeout(() => { input.style.borderColor = ''; err.remove(); }, 3500);
+        }
+
+        function showMainApp(immediate = false) {
+            const loginView = document.getElementById('view-login');
+            const brandBar = document.getElementById('global-brand-bar');
+
+            if (immediate) {
+                loginView.style.display = 'none';
+                brandBar.style.display = 'flex';
+            } else {
+                loginView.style.opacity = '0';
+                loginView.style.transition = 'opacity 0.4s ease';
+                setTimeout(() => {
+                    loginView.style.display = 'none';
+                    brandBar.style.display = 'flex';
+                }, 400);
+            }
+            document.getElementById('app-nav').style.display = 'flex';
+            switchView('home');
+
+            // Personalize greeting
+            if (appState.currentUser && appState.currentUser.name) {
+                const hour = new Date().getHours();
+                let timeMsg = "Morning";
+                if (hour >= 12 && hour < 17) timeMsg = "Afternoon";
+                if (hour >= 17) timeMsg = "Evening";
+                document.getElementById('greeting-msg').innerHTML = `Good ${timeMsg},<br>${appState.currentUser.name.split(' ')[0]}!`;
+            }
+        }
+
+        function handleLogout() {
+            if (confirm("Are you sure you want to logout?")) {
+                document.getElementById('global-brand-bar').style.display = 'none';
+                sessionStorage.removeItem('dm_pro_session');
+                location.reload();
+            }
+        }
+
+        // --- Navigation ---
+        function switchView(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            const targetView = document.getElementById('view-' + viewId);
+            if (targetView) targetView.classList.add('active');
+
+            // Update Top Bar Action Button
+            const actionBtn = document.getElementById('top-bar-action');
+            const actionIcon = document.getElementById('top-bar-icon');
+
+            if (viewId === 'profile') {
+                actionBtn.style.display = 'flex';
+                actionBtn.onclick = () => switchView('settings');
+                actionIcon.className = 'bi bi-gear-fill';
+            } else if (viewId === 'settings' || viewId === 'login') {
+                actionBtn.style.display = 'none';
+            } else {
+                actionBtn.style.display = 'flex';
+                actionBtn.onclick = () => switchView('profile');
+                actionIcon.className = 'bi bi-person-circle';
+            }
+
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            const navItems = document.querySelectorAll('.nav-item');
+
+            // Highlight nav icons only for main screens
+            if (viewId === 'home') navItems[0].classList.add('active');
+            if (viewId === 'collection') navItems[1].classList.add('active');
+            if (viewId === 'ledger') navItems[2].classList.add('active');
+            if (viewId === 'farmers') navItems[3].classList.add('active');
+
+            renderView(viewId);
+        }
+
+        function renderView(viewId) {
+            if (viewId === 'home') renderHome();
+            if (viewId === 'collection') renderCollection();
+            if (viewId === 'ledger') renderLedger();
+            if (viewId === 'farmers') renderFarmers();
+            if (viewId === 'profile') renderProfile();
+            if (viewId === 'settings') renderSettings();
+            if (viewId === 'farmer-report') renderFarmerReport();
+        }
+
+        function renderProfile() {
+            if (appState.currentUser) {
+                document.getElementById('edit-profile-name').value = appState.currentUser.name;
+                document.getElementById('edit-profile-email').value = appState.currentUser.email || '';
+                document.getElementById('edit-profile-mobile').value = appState.currentUser.mobile || '';
+                document.getElementById('profile-initials').innerText = appState.currentUser.name.charAt(0).toUpperCase();
+            }
+        }
+
+        function updateProfile() {
+            const name = document.getElementById('edit-profile-name').value.trim();
+            const email = document.getElementById('edit-profile-email').value.trim();
+            const mobile = document.getElementById('edit-profile-mobile').value.trim();
+
+            if (!name || !mobile) return alert("Name and Mobile are required");
+
+            // Update state
+            appState.currentUser.name = name;
+            appState.currentUser.email = email;
+            appState.currentUser.mobile = mobile;
+
+            // Persist to session
+            sessionStorage.setItem('dm_pro_session', JSON.stringify(appState.currentUser));
+
+            // Persist to local users list
+            const users = getUsers();
+            const idx = users.findIndex(u => u.mobile === mobile || u.email === email);
+            if (idx > -1) {
+                users[idx].name = name;
+                users[idx].email = email;
+                users[idx].mobile = mobile;
+                saveUsers(users);
+            }
+
+            alert("Profile updated successfully!");
+            renderProfile();
+            // Update greeting on home if they go back
+            const hour = new Date().getHours();
+            let timeMsg = "Morning";
+            if (hour >= 12 && hour < 17) timeMsg = "Afternoon";
+            if (hour >= 17) timeMsg = "Evening";
+            const greet = document.getElementById('greeting-msg');
+            if (greet) greet.innerHTML = `Good ${timeMsg},<br>${name.split(' ')[0]}!`;
+        }
+
+        function renderSettings() {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            const toggle = document.getElementById('settings-theme-toggle');
+            toggle.className = isDark ? 'bi bi-toggle-on' : 'bi bi-toggle-off';
+            toggle.style.color = isDark ? 'var(--primary)' : 'var(--text-sub)';
+        }
+
+        // --- Rendering Logic ---
+
+        function renderHome() {
+            const today = getTodayKey();
+            const todayEntries = appState.entries.filter(e => e.date === today);
+
+            let totalQty = 0;
+            todayEntries.forEach(e => totalQty += e.qty);
+
+            const activeCount = appState.farmers.filter(f => f.active).length;
+            const doneCount = todayEntries.length;
+
+            document.getElementById('home-total-qty').innerText = totalQty.toFixed(1);
+            document.getElementById('home-collection-count').innerText = `${doneCount} of ${activeCount} Farmers Done`;
+
+            const statusMsg = document.getElementById('home-total-status');
+            if (doneCount === 0) statusMsg.innerText = "Ready to start?";
+            else if (doneCount < activeCount) statusMsg.innerText = "Keep going!";
+            else statusMsg.innerText = "Shift Complete!";
+
+            // Recent List
+            const list = document.getElementById('recent-list');
+            list.innerHTML = '';
+            todayEntries.slice().reverse().slice(0, 5).forEach(e => {
+                const farmer = appState.farmers.find(f => f.id === e.farmerId);
+                const item = document.createElement('div');
+                item.className = 'list-item';
+                item.innerHTML = `
+                    <div class="meta">
+                        <div class="icon-box"><i class="bi bi-droplet-fill"></i></div>
+                        <div class="details">
+                            <h4>${farmer ? farmer.name : 'Unknown'}</h4>
+                            <p>${e.shift === 'morning' ? 'Morning' : 'Evening'}</p>
+                        </div>
+                    </div>
+                    <div class="val-badge">${e.qty} L</div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function renderCollection() {
+            const today = getTodayKey();
+            const list = document.getElementById('collection-list');
+            list.innerHTML = '';
+
+            const activeFarmers = appState.farmers.filter(f => f.active);
+
+            activeFarmers.forEach(f => {
+                const done = appState.entries.find(e => e.farmerId === f.id && e.date === today && e.shift === appState.currentShift);
+
+                if (appState.collFilter === 'remaining' && done) return;
+                if (appState.collFilter === 'done' && !done) return;
+
+                const item = document.createElement('div');
+                item.className = 'list-item';
+                item.onclick = () => openCollectionSheet(f);
+                item.innerHTML = `
+                    <div class="meta">
+                        <div class="icon-box"><i class="bi ${done ? 'bi-check-all' : 'bi-person-fill'}"></i></div>
+                        <div class="details">
+                            <h4>${f.name}</h4>
+                            <p>Daily Collection</p>
+                        </div>
+                    </div>
+                    ${done ? `<div class="val-badge" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">${done.qty} L</div>` : '<i class="bi bi-chevron-right" style="color: var(--text-sub);"></i>'}
+                `;
+                list.appendChild(item);
+            });
+
+            if (list.innerHTML === '') {
+                list.innerHTML = `<p style="text-align: center; padding: 40px; color: var(--text-sub);">No farmers in this list.</p>`;
+            }
+        }
+
+        function renderLedger() {
+            const body = document.getElementById('ledger-body');
+            body.innerHTML = '';
+
+            const dateInput = document.getElementById('ledger-date-filter');
+            // Default to today if not set
+            if (!dateInput.value) {
+                dateInput.value = getTodayKey();
+            }
+            const dateFilter = dateInput.value;
+
+            let filtered = appState.entries.filter(e => e.date === dateFilter).reverse();
+
+            filtered.forEach(e => {
+                const farmer = appState.farmers.find(f => f.id === e.farmerId);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${new Date(e.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}</td>
+                    <td><b>${farmer ? farmer.name : 'Unknown'}</b></td>
+                    <td><span class="badge ${e.shift === 'morning' ? 'badge-m' : 'badge-e'}">${e.shift === 'morning' ? 'morning' : 'evening'}</span></td>
+                    <td>${e.qty} L</td>
+                    <td>
+                        <span id="fat-val-${e.id}">${e.fat ? e.fat + '%' : '-'}</span>
+                        <button class="edit-fat-btn" onclick="editFat(${e.id})"><i class="bi bi-pencil"></i></button>
+                    </td>
+                `;
+                body.appendChild(row);
+            });
+
+            if (filtered.length === 0) {
+                body.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 40px;">No entries found for this date.</td></tr>';
+            }
+        }
+
+        function renderFarmers() {
+            const list = document.getElementById('master-farmer-list');
+            list.innerHTML = '';
+            appState.farmers.forEach(f => {
+                const item = document.createElement('div');
+                item.className = 'list-item';
+                item.innerHTML = `
+                    <div class="meta" onclick="openFarmerReport(${f.id})" style="cursor: pointer; flex: 1;">
+                        <div class="icon-box"><i class="bi bi-person"></i></div>
+                        <div class="details">
+                            <h4>${f.name}</h4>
+                            <p>Click for Report</p>
+                        </div>
+                    </div>
+                    <div class="switch-box" onclick="toggleFarmer(${f.id})" style="padding-left: 10px;">
+                        <i class="bi ${f.active ? 'bi-toggle-on' : 'bi-toggle-off'}" style="font-size: 1.8rem; color: ${f.active ? 'var(--primary)' : 'var(--text-sub)'};"></i>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        // --- Actions ---
+
+        function openCollectionSheet(farmer) {
+            appState.activeFarmer = farmer;
+            appState.tempQty = "0";
+            document.getElementById('sheet-farmer-name').innerText = farmer.name;
+            document.getElementById('sheet-farmer-meta').innerText = (appState.currentShift === 'morning' ? 'Morning Shift' : 'Evening Shift') + ' | ' + farmer.fat + '% Avg Fat';
+            updateSheetDisplay();
+            openSheet('sheet-entry');
+        }
+
+        function kPress(val) {
+            if (val === 'DEL') {
+                appState.tempQty = appState.tempQty.length > 1 ? appState.tempQty.slice(0, -1) : "0";
+            } else if (val === '.') {
+                if (!appState.tempQty.includes('.')) appState.tempQty += ".";
+            } else {
+                if (appState.tempQty === "0") appState.tempQty = val;
+                else appState.tempQty += val;
+            }
+            updateSheetDisplay();
+        }
+
+        function qtyAdjust(adj) {
+            let current = parseFloat(appState.tempQty);
+            current = Math.max(0, current + adj);
+            appState.tempQty = current.toString();
+            updateSheetDisplay();
+        }
+
+        function updateSheetDisplay() {
+            document.getElementById('display-qty').innerText = appState.tempQty;
+        }
+
+        function confirmEntry() {
+            const qty = parseFloat(appState.tempQty);
+            if (qty <= 0) return alert("Enter valid quantity");
+
+            const today = getTodayKey();
+            const existingIdx = appState.entries.findIndex(e => e.farmerId === appState.activeFarmer.id && e.date === today && e.shift === appState.currentShift);
+
+            const entry = {
+                id: Date.now(),
+                farmerId: appState.activeFarmer.id,
+                date: today,
+                shift: appState.currentShift,
+                qty: qty,
+                fat: 0, // Default to 0
+                timestamp: new Date().toISOString()
+            };
+
+            if (existingIdx > -1) appState.entries[existingIdx] = entry;
+            else appState.entries.push(entry);
+
+            saveData();
+            closeSheets();
+            renderCollection();
+        }
+
+        function openFarmerReport(id) {
+            appState.activeFarmer = appState.farmers.find(f => f.id === id);
+            switchView('farmer-report');
+        }
+
+        function renderFarmerReport() {
+            const f = appState.activeFarmer;
+            if (!f) return;
+
+            document.getElementById('report-farmer-name').innerText = f.name;
+            const now = new Date();
+            const monthName = now.toLocaleDateString('en-IN', { month: 'short' });
+            const year = now.getFullYear();
+            document.getElementById('report-month-year').innerText = now.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+
+            const body = document.getElementById('farmer-report-matrix-body');
+            body.innerHTML = '';
+
+            const daysInMonth = new Date(year, now.getMonth() + 1, 0).getDate();
+
+            // Create the 5 rows
+            let rowDay = '<tr style="background: #f8fafc;"><td style="border: 1px solid #ddd; padding: 10px; font-weight: 800; position: sticky; left: 0; background: #f8fafc;">day</td>';
+            let rowTime = '<tr style="background: #fff;"><td style="border: 1px solid #ddd; padding: 10px; font-weight: 800; position: sticky; left: 0; background: #fff;">time</td>';
+            let rowQty = '<tr style="background: #fff;"><td style="border: 1px solid #ddd; padding: 10px; font-weight: 800; position: sticky; left: 0; background: #fff;">milk quantity</td>';
+            let rowFat = '<tr style="background: #fff;"><td style="border: 1px solid #ddd; padding: 10px; font-weight: 800; position: sticky; left: 0; background: #fff;">fat</td>';
+            let rowCost = '<tr style="background: #f1f5f9;"><td style="border: 1px solid #ddd; padding: 10px; font-weight: 800; position: sticky; left: 0; background: #f1f5f9;">amount (₹)</td>';
+
+            let totalQty = 0;
+            let totalFat = 0;
+            let totalCost = 0;
+            let fatEntries = 0;
+            const ratePerFat = appState.costPerFat || 0;
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = `${year}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                const displayDate = `${String(d).padStart(2, '0')}-${monthName}`;
+
+                rowDay += `<td colspan="2" style="border: 1px solid #ddd; padding: 8px; font-weight: 700; background: #f1f5f9;">${displayDate}</td>`;
+
+                ['morning', 'evening'].forEach(shift => {
+                    const entry = appState.entries.find(e => e.farmerId === f.id && e.date === dateStr && e.shift === shift);
+
+                    rowTime += `<td style="border: 1px solid #ddd; padding: 6px; font-size: 0.75rem; color: var(--text-sub);">${shift}</td>`;
+
+                    if (entry) {
+                        totalQty += entry.qty;
+                        rowQty += `<td style="border: 1px solid #ddd; padding: 8px; font-weight: 700; color: var(--primary);">${entry.qty}</td>`;
+                        if (entry.fat) {
+                            totalFat += entry.fat;
+                            fatEntries++;
+                            rowFat += `<td style="border: 1px solid #ddd; padding: 8px; font-weight: 700; color: var(--accent);">${entry.fat}</td>`;
+                            
+                            const cost = entry.qty * entry.fat * ratePerFat;
+                            totalCost += cost;
+                            rowCost += `<td style="border: 1px solid #ddd; padding: 8px; font-weight: 700; color: #1D6F42;">${cost.toFixed(1)}</td>`;
+                        } else {
+                            rowFat += `<td style="border: 1px solid #ddd; padding: 8px; color: #ccc;">-</td>`;
+                            rowCost += `<td style="border: 1px solid #ddd; padding: 8px; color: #ccc;">-</td>`;
+                        }
+                    } else {
+                        rowQty += `<td style="border: 1px solid #ddd; padding: 8px; color: #eee;">-</td>`;
+                        rowFat += `<td style="border: 1px solid #ddd; padding: 8px; color: #eee;">-</td>`;
+                        rowCost += `<td style="border: 1px solid #ddd; padding: 8px; color: #eee;">-</td>`;
+                    }
+                });
+            }
+
+            rowDay += '</tr>';
+            rowTime += '</tr>';
+            rowQty += '</tr>';
+            rowFat += '</tr>';
+            rowCost += '</tr>';
+
+            body.innerHTML = rowDay + rowTime + rowQty + rowFat + rowCost;
+
+            document.getElementById('report-total-qty').innerText = totalQty.toFixed(1) + ' L';
+            document.getElementById('report-avg-fat').innerText = (fatEntries > 0 ? (totalFat / fatEntries).toFixed(1) : '0.0') + '%';
+            document.getElementById('report-total-cost').innerText = '₹' + Math.round(totalCost);
+        }
+
+        function exportFarmerCSV() {
+            const f = appState.activeFarmer;
+            if (!f) return;
+
+            const now = new Date();
+            const monthName = now.toLocaleDateString('en-IN', { month: 'short' });
+            const year = now.getFullYear();
+            const daysInMonth = new Date(year, now.getMonth() + 1, 0).getDate();
+
+            // Row strings for CSV
+            let csvDays = "day,";
+            let csvTimes = "time,";
+            let csvQty = "milk quantity,";
+            let csvFat = "fat,";
+            let csvAmount = "amount (INR),";
+            const ratePerFat = appState.costPerFat || 0;
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = `${year}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                const displayDate = `${String(d).padStart(2, '0')}-${monthName}`;
+
+                csvDays += `${displayDate},,`; // Double column for morning/evening
+                csvTimes += "morning,evening,";
+
+                ['morning', 'evening'].forEach(shift => {
+                    const entry = appState.entries.find(e => e.farmerId === f.id && e.date === dateStr && e.shift === shift);
+                    if (entry) {
+                        csvQty += `${entry.qty},`;
+                        csvFat += `${entry.fat || '-'},`;
+                        if (entry.fat) {
+                            csvAmount += `${(entry.qty * entry.fat * ratePerFat).toFixed(2)},`;
+                        } else {
+                            csvAmount += "-,";
+                        }
+                    } else {
+                        csvQty += "-,";
+                        csvFat += "-,";
+                        csvAmount += "-,";
+                    }
+                });
+            }
+
+            const csvContent = "data:text/csv;charset=utf-8," +
+                `Farmer Monthly Report: ${f.name} (${now.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })})\n` +
+                `Rate per Fat: ${ratePerFat}\n\n` +
+                csvDays + "\n" + csvTimes + "\n" + csvQty + "\n" + csvFat + "\n" + csvAmount + "\n";
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `${f.name.replace(/\s+/g, '_')}_Monthly_Statement.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function editFat(entryId) {
+            const entry = appState.entries.find(e => e.id === entryId);
+            if (!entry) return;
+
+            const newFat = prompt(`Enter Fat % for ${entry.date}:`, entry.fat === 0 ? "" : entry.fat);
+            if (newFat === null) return;
+
+            const fatVal = parseFloat(newFat);
+            if (isNaN(fatVal)) return alert("Please enter a valid number");
+
+            entry.fat = fatVal;
+            saveData();
+            renderLedger();
+            alert("Fat % updated successfully!");
+        }
+
+        function saveNewFarmer() {
+            const name = document.getElementById('add-f-name').value;
+            if (!name) return alert("Fill all fields");
+
+            appState.farmers.push({
+                id: Date.now(),
+                name: name,
+                active: true
+            });
+            saveData();
+            closeSheets();
+            renderFarmers();
+            // Clear inputs
+            document.getElementById('add-f-name').value = '';
+        }
+
+        function toggleFarmer(id) {
+            const f = appState.farmers.find(x => x.id === id);
+            if (f) {
+                f.active = !f.active;
+                saveData();
+                renderFarmers();
+            }
+        }
+
+        function generateMonthlyMaster() {
+            const head = document.getElementById('register-head');
+            const body = document.getElementById('monthly-master-body');
+
+            const activeFarmers = appState.farmers.filter(f => f.active);
+            if (activeFarmers.length === 0) return alert("No active farmers found.");
+
+            // Create Headers
+            let headerHtml = `<tr><th>Date</th>`;
+            activeFarmers.forEach(f => {
+                headerHtml += `<th colspan="2" style="text-align:center; border-left: 2px solid var(--bg-page);">${f.name}</th>`;
+            });
+            headerHtml += `</tr><tr><th></th>`;
+            activeFarmers.forEach(f => {
+                headerHtml += `<th style="font-size:0.6rem; border-left: 2px solid var(--bg-page);">AM</th><th style="font-size:0.6rem;">PM</th>`;
+            });
+            headerHtml += `</tr>`;
+            head.innerHTML = headerHtml;
+
+            // Create 31 Rows
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            let bodyHtml = '';
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                bodyHtml += `<tr><td style="font-weight:700;">${d} ${new Date(year, month, d).toLocaleDateString('en-IN', { month: 'short' })}</td>`;
+
+                activeFarmers.forEach(f => {
+                    const am = appState.entries.find(e => e.farmerId === f.id && e.date === dateStr && e.shift === 'morning');
+                    const pm = appState.entries.find(e => e.farmerId === f.id && e.date === dateStr && e.shift === 'evening');
+
+                    bodyHtml += `<td style="border-left: 1px solid var(--bg-page);">${am ? am.qty : '-'}</td>`;
+                    bodyHtml += `<td>${pm ? pm.qty : '-'}</td>`;
+                });
+                bodyHtml += `</tr>`;
+            }
+            body.innerHTML = bodyHtml;
+
+            alert("Detailed Monthly Register Loaded!");
+        }
+
+        function updateShift(shift) {
+            appState.currentShift = shift;
+            document.getElementById('coll-shift-m').classList.toggle('active', shift === 'morning');
+            document.getElementById('coll-shift-e').classList.toggle('active', shift === 'evening');
+            document.getElementById('collection-meta').innerText = (shift === 'morning' ? 'Morning Shift' : 'Evening Shift') + ' | ' + new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long' });
+            renderCollection();
+        }
+
+        function setCollectionFilter(filter) {
+            appState.collFilter = filter;
+            document.getElementById('tab-remaining').classList.toggle('active', filter === 'remaining');
+            document.getElementById('tab-done').classList.toggle('active', filter === 'done');
+            renderCollection();
+        }
+
+        // --- UI Utilities ---
+
+        function openSheet(id) {
+            document.getElementById('sheet-overlay').classList.add('active');
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeSheets() {
+            document.getElementById('sheet-overlay').classList.remove('active');
+            document.querySelectorAll('.bottom-sheet').forEach(s => s.classList.remove('active'));
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const current = body.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            body.setAttribute('data-theme', next);
+
+            // Sync setting view if active
+            const toggle = document.getElementById('settings-theme-toggle');
+            if (toggle) {
+                const isDark = next === 'dark';
+                toggle.className = isDark ? 'bi bi-toggle-on' : 'bi bi-toggle-off';
+                toggle.style.color = isDark ? 'var(--primary)' : 'var(--text-sub)';
+            }
+        }
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('live-date').innerText = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' });
+            const hour = now.getHours();
+            let msg = "Good Morning!";
+            if (hour >= 12 && hour < 17) msg = "Good Afternoon!";
+            if (hour >= 17) msg = "Good Evening!";
+            document.getElementById('greeting-msg').innerText = msg;
+        }
+
+        function autoShift() {
+            const hour = new Date().getHours();
+            if (hour >= 14) updateShift('evening');
+            else updateShift('morning');
+        }
+
+        function getTodayKey() { return new Date().toISOString().split('T')[0]; }
+
+        function generateMonthly() {
+            alert("Generating Monthly Insights...");
+            // Expansion point for PDF/Report generation
+        }
+
+        init();
+    </script>
+</body>
+
+</html>
