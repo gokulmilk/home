@@ -1931,6 +1931,7 @@
             list.innerHTML = '';
             todayEntries.slice().reverse().slice(0, 5).forEach(e => {
                 const farmer = e.farmer; // Populated by backend
+                const item = document.createElement('div');
                 item.className = 'list-item';
                 item.innerHTML = `
                     <div class="meta">
@@ -2034,13 +2035,8 @@
                             <p>${f.mobile || ''}</p>
                         </div>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <div class="switch-box" onclick="toggleFarmer('${f._id}')">
-                            <i class="bi ${f.active ? 'bi-toggle-on' : 'bi-toggle-off'}" style="font-size: 1.8rem; color: ${f.active ? 'var(--primary)' : 'var(--text-sub)'};"></i>
-                        </div>
-                        <button onclick="deleteFarmer('${f._id}')" style="background: none; border: none; color: #EF4444; font-size: 1.2rem; cursor: pointer; padding: 5px;">
-                            <i class="bi bi-trash3"></i>
-                        </button>
+                    <div class="switch-box" onclick="toggleFarmer('${f._id}')" style="padding-left: 10px;">
+                        <i class="bi ${f.active ? 'bi-toggle-on' : 'bi-toggle-off'}" style="font-size: 1.8rem; color: ${f.active ? 'var(--primary)' : 'var(--text-sub)'};"></i>
                     </div>
                 `;
                 list.appendChild(item);
@@ -2296,27 +2292,6 @@
                     renderFarmers();
                     alert("Update failed: " + err.message);
                 }
-            }
-        }
-
-        async function deleteFarmer(id) {
-            const lang = appState.language || 'hi';
-            const f = appState.farmers.find(x => x._id === id);
-            if (!f) return;
-
-            const confirmMsg = lang === 'hi' 
-                ? `क्या आप वाकई ${f.name} को हटाना चाहते हैं?` 
-                : `Are you sure you want to delete ${f.name}?`;
-            
-            if (!confirm(confirmMsg)) return;
-
-            try {
-                await apiFetch(`/farmers/${id}`, {
-                    method: 'DELETE'
-                });
-                await refreshData();
-            } catch (err) {
-                alert("Delete failed: " + err.message);
             }
         }
 
