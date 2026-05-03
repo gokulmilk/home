@@ -39,7 +39,7 @@ router.post('/', auth, async (req, res) => {
 // @route   PUT api/farmers/:id
 // @desc    Update farmer (active status, name, etc.)
 router.put('/:id', auth, async (req, res) => {
-    const { name, fat, active } = req.body;
+    const { name, mobile, fat, active } = req.body;
 
     try {
         let farmer = await Farmer.findById(req.params.id);
@@ -59,7 +59,27 @@ router.put('/:id', auth, async (req, res) => {
         res.json(farmer);
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ msg: 'Server Error' });
+        res.status(500).send('Server Error');
+    }
+});
+
+// @route   DELETE api/farmers/:id
+// @desc    Delete farmer
+router.delete('/:id', auth, async (req, res) => {
+    try {
+        let farmer = await Farmer.findById(req.params.id);
+        if (!farmer) return res.status(404).json({ msg: 'Farmer not found' });
+
+        // Make sure user owns farmer
+        if (farmer.user.toString() !== req.user.id) {
+            return res.status(401).json({ msg: 'User not authorized' });
+        }
+
+        await Farmer.findByIdAndDelete(req.params.id);
+        res.json({ msg: 'Farmer removed' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
     }
 });
 
