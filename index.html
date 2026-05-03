@@ -876,8 +876,10 @@
             <div class="auth-card">
                 <!-- Tab Switcher -->
                 <div class="auth-tabs">
-                    <button class="auth-tab active" id="tab-login-btn" onclick="switchAuthTab('login')" data-i18n="login">Login</button>
-                    <button class="auth-tab" id="tab-signup-btn" onclick="switchAuthTab('signup')" data-i18n="signup">Sign Up</button>
+                    <button class="auth-tab active" id="tab-login-btn" onclick="switchAuthTab('login')"
+                        data-i18n="login">Login</button>
+                    <button class="auth-tab" id="tab-signup-btn" onclick="switchAuthTab('signup')"
+                        data-i18n="signup">Sign Up</button>
                 </div>
 
                 <!-- LOGIN FORM -->
@@ -887,7 +889,8 @@
                         <div class="input-wrap">
                             <i class="bi bi-person-fill input-icon"></i>
                             <input type="text" id="login-identifier" class="auth-input"
-                                data-i18n="mobile_or_email_placeholder" placeholder="Enter mobile or email" autocomplete="username" required>
+                                data-i18n="mobile_or_email_placeholder" placeholder="Enter mobile or email"
+                                autocomplete="username" required>
                         </div>
                     </div>
                     <div class="form-group">
@@ -895,7 +898,8 @@
                         <div class="input-wrap">
                             <i class="bi bi-lock-fill input-icon"></i>
                             <input type="password" id="login-password" class="auth-input has-toggle"
-                                data-i18n="password_placeholder" placeholder="Enter your password" autocomplete="current-password" required>
+                                data-i18n="password_placeholder" placeholder="Enter your password"
+                                autocomplete="current-password" required>
                             <button type="button" class="toggle-pass" onclick="togglePass('login-password', this)"><i
                                     class="bi bi-eye"></i></button>
                         </div>
@@ -907,8 +911,9 @@
                         <span data-i18n="login">Login</span> <i class="bi bi-arrow-right-circle-fill"></i>
                     </button>
                     <div class="auth-divider">
-                        <span data-i18n="need_account">Don't have an account?</span> 
-                        <button type="button" class="auth-link-btn" onclick="switchAuthTab('signup')" data-i18n="signup">Sign Up</button>
+                        <span data-i18n="need_account">Don't have an account?</span>
+                        <button type="button" class="auth-link-btn" onclick="switchAuthTab('signup')"
+                            data-i18n="signup">Sign Up</button>
                     </div>
                 </form>
 
@@ -918,24 +923,24 @@
                         <label data-i18n="full_name">Full Name</label>
                         <div class="input-wrap">
                             <i class="bi bi-person-badge-fill input-icon"></i>
-                            <input type="text" id="signup-name" class="auth-input" data-i18n="full_name_placeholder" placeholder="Your full name"
-                                autocomplete="name" required>
+                            <input type="text" id="signup-name" class="auth-input" data-i18n="full_name_placeholder"
+                                placeholder="Your full name" autocomplete="name" required>
                         </div>
                     </div>
                     <div class="form-group">
                         <label data-i18n="mobile">Mobile Number</label>
                         <div class="input-wrap">
                             <i class="bi bi-telephone-fill input-icon"></i>
-                            <input type="tel" id="signup-mobile" class="auth-input" data-i18n="mobile_placeholder" placeholder="10-digit mobile number"
-                                maxlength="10" pattern="[0-9]{10}" required>
+                            <input type="tel" id="signup-mobile" class="auth-input" data-i18n="mobile_placeholder"
+                                placeholder="10-digit mobile number" maxlength="10" pattern="[0-9]{10}" required>
                         </div>
                     </div>
                     <div class="form-group">
                         <label data-i18n="email">Email Address</label>
                         <div class="input-wrap">
                             <i class="bi bi-envelope-fill input-icon"></i>
-                            <input type="email" id="signup-email" class="auth-input" data-i18n="email_placeholder" placeholder="you@example.com"
-                                autocomplete="email" required>
+                            <input type="email" id="signup-email" class="auth-input" data-i18n="email_placeholder"
+                                placeholder="you@example.com" autocomplete="email" required>
                         </div>
                     </div>
                     <div class="form-group">
@@ -943,8 +948,8 @@
                         <div class="input-wrap">
                             <i class="bi bi-shield-lock-fill input-icon"></i>
                             <input type="password" id="signup-password" class="auth-input has-toggle"
-                                data-i18n="password_placeholder_signup" placeholder="Create a password (min 6 chars)" minlength="6" autocomplete="new-password"
-                                required>
+                                data-i18n="password_placeholder_signup" placeholder="Create a password (min 6 chars)"
+                                minlength="6" autocomplete="new-password" required>
                             <button type="button" class="toggle-pass" onclick="togglePass('signup-password', this)"><i
                                     class="bi bi-eye"></i></button>
                         </div>
@@ -953,8 +958,9 @@
                         <span data-i18n="signup">Create Account</span> <i class="bi bi-check-circle-fill"></i>
                     </button>
                     <div class="auth-divider">
-                        <span data-i18n="already_account">Already have an account?</span> 
-                        <button type="button" class="auth-link-btn" onclick="switchAuthTab('login')" data-i18n="login">Login</button>
+                        <span data-i18n="already_account">Already have an account?</span>
+                        <button type="button" class="auth-link-btn" onclick="switchAuthTab('login')"
+                            data-i18n="login">Login</button>
                     </div>
                 </form>
             </div>
@@ -984,7 +990,8 @@
                     </div>
                 </div>
                 <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
-                    <span id="home-collection-count" style="font-size: 0.8rem; font-weight: 700; color: var(--text-sub);">0 of 0 Farmers Done</span>
+                    <span id="home-collection-count"
+                        style="font-size: 0.8rem; font-weight: 700; color: var(--text-sub);">0 of 0 Farmers Done</span>
                 </div>
             </div>
 
@@ -1026,9 +1033,10 @@
             </header>
 
             <div class="tab-group">
-                <button class="tab-btn active" id="tab-remaining"
-                    onclick="setCollectionFilter('remaining')" data-i18n="remaining">Remaining</button>
-                <button class="tab-btn" id="tab-done" onclick="setCollectionFilter('done')" data-i18n="completed">Completed</button>
+                <button class="tab-btn active" id="tab-remaining" onclick="setCollectionFilter('remaining')"
+                    data-i18n="remaining">Remaining</button>
+                <button class="tab-btn" id="tab-done" onclick="setCollectionFilter('done')"
+                    data-i18n="completed">Completed</button>
             </div>
 
             <div class="list-container" id="collection-list">
@@ -1054,11 +1062,11 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Farmer</th>
-                                <th>Shift</th>
-                                <th>Qty (L)</th>
-                                <th>Fat %</th>
+                                <th data-i18n="date">Date</th>
+                                <th data-i18n="farmer">Farmer</th>
+                                <th data-i18n="shift">Shift</th>
+                                <th data-i18n="qty">Qty (L)</th>
+                                <th data-i18n="fat">Fat %</th>
                             </tr>
                         </thead>
                         <tbody id="ledger-body">
@@ -1107,14 +1115,19 @@
             </header>
 
             <!-- Global Rate Setting -->
-            <div class="progress-card" style="margin: 0 20px 24px; padding: 20px; background: rgba(var(--primary-rgb), 0.03); border: 1px solid rgba(var(--primary-rgb), 0.1); border-radius: 20px;">
+            <div class="progress-card"
+                style="margin: 0 20px 24px; padding: 20px; background: rgba(var(--primary-rgb), 0.03); border: 1px solid rgba(var(--primary-rgb), 0.1); border-radius: 20px;">
                 <div style="display: flex; align-items: center; justify-content: space-between;">
                     <div>
-                        <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--primary);" data-i18n="rate_setting">Rate Setting</h4>
-                        <p style="font-size: 0.7rem; color: var(--text-sub);" data-i18n="cost_per_fat">Cost per 1.0 Fat (%)</p>
+                        <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--primary);"
+                            data-i18n="rate_setting">Rate Setting</h4>
+                        <p style="font-size: 0.7rem; color: var(--text-sub);" data-i18n="cost_per_fat">Cost per 1.0 Fat
+                            (%)</p>
                     </div>
                     <div class="input-wrap" style="width: 120px;">
-                        <input type="number" id="global-cost-per-fat" class="auth-input" style="padding: 10px; text-align: center; border: 2px solid var(--primary);" placeholder="0.00" onchange="updateGlobalRate()">
+                        <input type="number" id="global-cost-per-fat" class="auth-input"
+                            style="padding: 10px; text-align: center; border: 2px solid var(--primary);"
+                            placeholder="0.00" onchange="updateGlobalRate()">
                     </div>
                 </div>
             </div>
@@ -1141,15 +1154,18 @@
                 <div
                     style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; text-align: center; margin-bottom: 16px;">
                     <div>
-                        <p style="font-size: 0.6rem; color: var(--text-sub); font-weight: 700;" data-i18n="total_litres">TOTAL LITRES</p>
+                        <p style="font-size: 0.6rem; color: var(--text-sub); font-weight: 700;"
+                            data-i18n="total_litres">TOTAL LITRES</p>
                         <h2 id="report-total-qty" style="color: var(--primary); font-size: 1.2rem;">0.0</h2>
                     </div>
                     <div>
-                        <p style="font-size: 0.6rem; color: var(--text-sub); font-weight: 700;" data-i18n="avg_fat">AVG FAT %</p>
+                        <p style="font-size: 0.6rem; color: var(--text-sub); font-weight: 700;" data-i18n="avg_fat">AVG
+                            FAT %</p>
                         <h2 id="report-avg-fat" style="color: var(--accent); font-size: 1.2rem;">0.0</h2>
                     </div>
                     <div>
-                        <p style="font-size: 0.6rem; color: var(--text-sub); font-weight: 700;" data-i18n="total_payout">TOTAL PAYOUT</p>
+                        <p style="font-size: 0.6rem; color: var(--text-sub); font-weight: 700;"
+                            data-i18n="total_payout">TOTAL PAYOUT</p>
                         <h2 id="report-total-cost" style="color: #1D6F42; font-size: 1.2rem;">₹0</h2>
                     </div>
                 </div>
@@ -1182,8 +1198,8 @@
             </header>
             <div style="text-align: center; margin-bottom: 24px;">
                 <div class="profile-avatar" id="profile-initials">U</div>
-                <p
-                    style="color: var(--text-sub); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;" data-i18n="edit_profile">
+                <p style="color: var(--text-sub); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;"
+                    data-i18n="edit_profile">
                     Edit Profile</p>
             </div>
 
@@ -1192,22 +1208,24 @@
                     <label data-i18n="full_name">Full Name</label>
                     <div class="input-wrap">
                         <i class="bi bi-person-fill input-icon"></i>
-                        <input type="text" id="edit-profile-name" class="auth-input" data-i18n="your_name" placeholder="Your Name">
+                        <input type="text" id="edit-profile-name" class="auth-input" data-i18n="your_name"
+                            placeholder="Your Name">
                     </div>
                 </div>
                 <div class="form-group">
                     <label data-i18n="email">Email Address</label>
                     <div class="input-wrap">
                         <i class="bi bi-envelope-fill input-icon"></i>
-                        <input type="email" id="edit-profile-email" class="auth-input" data-i18n="your_email" placeholder="Your Email">
+                        <input type="email" id="edit-profile-email" class="auth-input" data-i18n="your_email"
+                            placeholder="Your Email">
                     </div>
                 </div>
                 <div class="form-group">
                     <label data-i18n="mobile">Mobile Number</label>
                     <div class="input-wrap">
                         <i class="bi bi-telephone-fill input-icon"></i>
-                        <input type="tel" id="edit-profile-mobile" class="auth-input" data-i18n="your_mobile" placeholder="Your Mobile"
-                            maxlength="10">
+                        <input type="tel" id="edit-profile-mobile" class="auth-input" data-i18n="your_mobile"
+                            placeholder="Your Mobile" maxlength="10">
                     </div>
                 </div>
 
@@ -1254,14 +1272,16 @@
                         <i class="bi bi-bell-fill"></i>
                         <span data-i18n="notifications">Notifications</span>
                     </div>
-                    <i class="bi bi-toggle-on" id="settings-notif-toggle" style="font-size: 1.8rem; color: var(--primary);"></i>
+                    <i class="bi bi-toggle-on" id="settings-notif-toggle"
+                        style="font-size: 1.8rem; color: var(--primary);"></i>
                 </div>
                 <div class="settings-item" onclick="toggleLanguage()">
                     <div class="info">
                         <i class="bi bi-translate"></i>
                         <span data-i18n="language">Language</span>
                     </div>
-                    <span id="current-lang-display" style="font-size: 0.8rem; color: var(--text-sub); font-weight: 700;">English</span>
+                    <span id="current-lang-display"
+                        style="font-size: 0.8rem; color: var(--text-sub); font-weight: 700;">English</span>
                 </div>
                 <div class="settings-item">
                     <div class="info">
@@ -1351,13 +1371,15 @@
 
             <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px;">
                 <div>
-                    <label style="font-size: 0.8rem; font-weight: 700; display: block; margin-bottom: 6px;" data-i18n="farmer_name">Farmer
+                    <label style="font-size: 0.8rem; font-weight: 700; display: block; margin-bottom: 6px;"
+                        data-i18n="farmer_name">Farmer
                         Name</label>
                     <input type="text" id="add-f-name" placeholder="Full Name"
                         style="width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--bg-page); background: var(--bg-page); outline: none;">
                 </div>
                 <div>
-                    <label style="font-size: 0.8rem; font-weight: 700; display: block; margin-bottom: 6px;" data-i18n="mobile">Mobile Number</label>
+                    <label style="font-size: 0.8rem; font-weight: 700; display: block; margin-bottom: 6px;"
+                        data-i18n="mobile">Mobile Number</label>
                     <input type="tel" id="add-f-mobile" placeholder="10-digit number" maxlength="10"
                         style="width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--bg-page); background: var(--bg-page); outline: none;">
                 </div>
@@ -1461,6 +1483,7 @@
                 amt: "Amount",
                 morning: "Morning",
                 evening: "Evening",
+                today_collection: "Today's Collection",
                 total: "Total",
                 avg: "Average"
             },
@@ -1541,6 +1564,7 @@
                 amt: "रकम",
                 morning: "सुबह",
                 evening: "शाम",
+                today_collection: "आज का कलेक्शन",
                 total: "कुल",
                 avg: "औसत"
             }
@@ -1591,7 +1615,7 @@
         async function init() {
             const token = sessionStorage.getItem('dm_pro_token');
             const savedUser = sessionStorage.getItem('dm_pro_session');
-            
+
             if (token && savedUser) {
                 appState.currentUser = JSON.parse(savedUser);
                 showMainApp(true);
@@ -1831,7 +1855,7 @@
 
                 appState.currentUser = { name: data.name, email: data.email, mobile: data.mobile };
                 sessionStorage.setItem('dm_pro_session', JSON.stringify(appState.currentUser));
-                
+
                 alert("Profile updated successfully!");
                 renderProfile();
             } catch (err) {
@@ -1936,7 +1960,7 @@
                         <div class="icon-box"><i class="bi ${done ? 'bi-check-all' : 'bi-person-fill'}"></i></div>
                         <div class="details">
                             <h4>${f.name}</h4>
-                            <p>Daily Collection</p>
+                            <p>today's Collection</p>
                         </div>
                     </div>
                     ${done ? `<div class="val-badge" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">${done.qty} L</div>` : '<i class="bi bi-chevron-right" style="color: var(--text-sub);"></i>'}
@@ -2050,7 +2074,7 @@
             if (qty <= 0) return alert("Enter valid quantity");
 
             const today = getTodayKey();
-            
+
             try {
                 await apiFetch('/entries', {
                     method: 'POST',
@@ -2090,7 +2114,7 @@
 
             const head = document.getElementById('farmer-report-matrix-head');
             const body = document.getElementById('farmer-report-matrix-body');
-            
+
             // Header Row
             head.innerHTML = `
                 <tr>
@@ -2121,7 +2145,7 @@
                         const entry = entries.find(e => e.date === dateStr && e.shift === shift);
                         const row = document.createElement('tr');
                         row.style.background = shift === 'morning' ? '#fff' : '#f9fafb';
-                        
+
                         let qtyCell = '<td style="border: 1px solid #ddd; padding: 8px; color: #ccc;">-</td>';
                         let fatCell = '<td style="border: 1px solid #ddd; padding: 8px; color: #ccc;">-</td>';
                         let costCell = '<td style="border: 1px solid #ddd; padding: 8px; color: #ccc;">-</td>';
@@ -2149,7 +2173,7 @@
                         body.appendChild(row);
                     });
                 }
-                
+
                 document.getElementById('report-total-qty').innerText = totalQty.toFixed(1) + ' L';
                 document.getElementById('report-avg-fat').innerText = (fatEntries > 0 ? (totalFat / fatEntries).toFixed(1) : '0.0') + '%';
                 document.getElementById('report-total-cost').innerText = '₹' + Math.round(totalCost);
@@ -2178,7 +2202,7 @@
             // Since entries are already fetched in renderFarmerReport, we should probably reuse them or fetch again.
             // For now, let's assume we need to fetch or use a local cache.
             // Simplest is to fetch again if needed, but usually this is called after viewing.
-            
+
             // To make it robust, we'll use a fetch-and-download pattern.
             apiFetch(`/entries/farmer/${f._id}`).then(entries => {
                 for (let d = 1; d <= daysInMonth; d++) {
@@ -2277,7 +2301,7 @@
             // Create Headers (Dates)
             let headerRow1 = `<tr><th rowspan="2" style="border: 1px solid #ddd; padding: 10px; background: #f8fafc; position: sticky; left: 0; z-index: 2;">${dict.farmer_name}</th>`;
             let headerRow2 = `<tr>`;
-            
+
             for (let d = 1; d <= daysInMonth; d++) {
                 headerRow1 += `<th colspan="2" style="border: 1px solid #ddd; padding: 8px; background: #f1f5f9; min-width: 80px;">${d} ${monthName}</th>`;
                 headerRow2 += `<th style="border: 1px solid #ddd; padding: 4px; font-size: 0.6rem; background: #fff;">AM</th><th style="border: 1px solid #ddd; padding: 4px; font-size: 0.6rem; background: #fff;">PM</th>`;
@@ -2292,7 +2316,7 @@
                 let bodyHtml = '';
                 activeFarmers.forEach(f => {
                     bodyHtml += `<tr><td style="border: 1px solid #ddd; padding: 10px; font-weight: 700; position: sticky; left: 0; background: #fff; text-align: left; box-shadow: 2px 0 5px rgba(0,0,0,0.05);">${f.name}</td>`;
-                    
+
                     for (let d = 1; d <= daysInMonth; d++) {
                         const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
                         const am = entries.find(e => e.farmer._id === f._id && e.date === dateStr && e.shift === 'morning');
