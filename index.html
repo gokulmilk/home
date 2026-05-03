@@ -1109,9 +1109,15 @@
                     <h1 data-i18n="farmers">Farmers</h1>
                     <p data-i18n="manage_list">Manage Master List</p>
                 </div>
-                <button class="profile-trigger" onclick="openSheet('sheet-add-farmer')">
-                    <i class="bi bi-plus-lg"></i>
-                </button>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button class="edit-fat-btn" style="padding: 8px 12px; font-size: 0.8rem;"
+                        onclick="generateMonthlyMaster()">
+                        <i class="bi bi-calendar-check"></i>
+                    </button>
+                    <button class="profile-trigger" onclick="openSheet('sheet-add-farmer')">
+                        <i class="bi bi-plus-lg"></i>
+                    </button>
+                </div>
             </header>
 
             <!-- Global Rate Setting -->
@@ -2203,8 +2209,9 @@
             // For now, let's assume we need to fetch or use a local cache.
             // Simplest is to fetch again if needed, but usually this is called after viewing.
 
-            // To make it robust, we'll use a fetch-and-download pattern.
-            apiFetch(`/entries/farmer/${f._id}`).then(entries => {
+                let totalQtyMonth = 0;
+                let totalAmtMonth = 0;
+
                 for (let d = 1; d <= daysInMonth; d++) {
                     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
                     const displayDate = `${d} ${monthName}`;
@@ -2212,13 +2219,18 @@
                     ['morning', 'evening'].forEach(shift => {
                         const entry = entries.find(e => e.date === dateStr && e.shift === shift);
                         if (entry) {
-                            const amt = entry.fat ? (entry.qty * entry.fat * ratePerFat).toFixed(2) : '-';
-                            csvContent += `${displayDate},${shift},${entry.qty},${entry.fat || '-'},${amt}\n`;
+                            const amt = entry.fat ? (entry.qty * entry.fat * ratePerFat) : 0;
+                            totalQtyMonth += entry.qty;
+                            totalAmtMonth += amt;
+                            csvContent += `${displayDate},${shift},${entry.qty},${entry.fat || '-'},${amt.toFixed(2)}\n`;
                         } else {
                             csvContent += `${displayDate},${shift},-,-,-\n`;
                         }
                     });
                 }
+
+                // Add Total Row
+                csvContent += `\nTOTAL,,${totalQtyMonth.toFixed(1)},,${totalAmtMonth.toFixed(2)}\n`;
 
                 const encodedUri = encodeURI(csvContent);
                 const link = document.createElement("a");
@@ -2298,14 +2310,14 @@
             const monthName = now.toLocaleDateString(lang === 'hi' ? 'hi-IN' : 'en-IN', { month: 'short' });
             const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-            // Create Headers (Dates)
-            let headerRow1 = `<tr><th rowspan="2" style="border: 1px solid #ddd; padding: 10px; background: #f8fafc; position: sticky; left: 0; z-index: 2;">${dict.farmer_name}</th>`;
+            // Headers: Farmers
+            let headerRow1 = `<tr><th rowspan="2" style="border: 1px solid #ddd; padding: 10px; background: #f8fafc; position: sticky; left: 0; z-index: 3;">${dict.date}</th>`;
             let headerRow2 = `<tr>`;
-
-            for (let d = 1; d <= daysInMonth; d++) {
-                headerRow1 += `<th colspan="2" style="border: 1px solid #ddd; padding: 8px; background: #f1f5f9; min-width: 80px;">${d} ${monthName}</th>`;
+            
+            activeFarmers.forEach(f => {
+                headerRow1 += `<th colspan="2" style="border: 1px solid #ddd; padding: 10px; background: #f1f5f9; min-width: 100px;">${f.name}</th>`;
                 headerRow2 += `<th style="border: 1px solid #ddd; padding: 4px; font-size: 0.6rem; background: #fff;">AM</th><th style="border: 1px solid #ddd; padding: 4px; font-size: 0.6rem; background: #fff;">PM</th>`;
-            }
+            });
             headerRow1 += `</tr>`;
             headerRow2 += `</tr>`;
             head.innerHTML = headerRow1 + headerRow2;
@@ -2314,19 +2326,21 @@
                 const entries = await apiFetch(`/entries?month=${month + 1}&year=${year}`);
 
                 let bodyHtml = '';
-                activeFarmers.forEach(f => {
-                    bodyHtml += `<tr><td style="border: 1px solid #ddd; padding: 10px; font-weight: 700; position: sticky; left: 0; background: #fff; text-align: left; box-shadow: 2px 0 5px rgba(0,0,0,0.05);">${f.name}</td>`;
-
-                    for (let d = 1; d <= daysInMonth; d++) {
-                        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                    const displayDate = `${d} ${monthName}`;
+                    
+                    bodyHtml += `<tr><td style="border: 1px solid #ddd; padding: 10px; font-weight: 700; position: sticky; left: 0; background: #fff; z-index: 2; box-shadow: 2px 0 5px rgba(0,0,0,0.05); text-align: left;">${displayDate}</td>`;
+                    
+                    activeFarmers.forEach(f => {
                         const am = entries.find(e => e.farmer._id === f._id && e.date === dateStr && e.shift === 'morning');
                         const pm = entries.find(e => e.farmer._id === f._id && e.date === dateStr && e.shift === 'evening');
 
                         bodyHtml += `<td style="border: 1px solid #ddd; padding: 8px; color: ${am ? 'var(--primary)' : '#ccc'};">${am ? am.qty : '-'}</td>`;
                         bodyHtml += `<td style="border: 1px solid #ddd; padding: 8px; color: ${pm ? 'var(--accent)' : '#ccc'};">${pm ? pm.qty : '-'}</td>`;
-                    }
+                    });
                     bodyHtml += `</tr>`;
-                });
+                }
                 body.innerHTML = bodyHtml;
             } catch (err) {
                 console.error(err);
