@@ -1952,10 +1952,21 @@
             const list = document.getElementById('collection-list');
             list.innerHTML = '';
 
+            if (!appState.farmers || appState.farmers.length === 0) {
+                list.innerHTML = `<p style="text-align: center; padding: 40px; color: var(--text-sub);">No farmers found. Add some in the Farmers tab.</p>`;
+                return;
+            }
+
             const activeFarmers = appState.farmers.filter(f => f.active);
+            const lang = appState.language || 'hi';
+            const dict = translations[lang];
 
             activeFarmers.forEach(f => {
-                const done = appState.entries.find(e => e.farmer._id === f._id && e.date === today && e.shift === appState.currentShift);
+                // Find if this farmer already has an entry for today/shift
+                const done = appState.entries.find(e => {
+                    const farmerId = e.farmer?._id || e.farmer;
+                    return farmerId === f._id && e.date === today && e.shift === appState.currentShift;
+                });
 
                 if (appState.collFilter === 'remaining' && done) return;
                 if (appState.collFilter === 'done' && !done) return;
@@ -1968,7 +1979,7 @@
                         <div class="icon-box"><i class="bi ${done ? 'bi-check-all' : 'bi-person-fill'}"></i></div>
                         <div class="details">
                             <h4>${f.name}</h4>
-                            <p>today's Collection</p>
+                            <p>${dict.today_collection || "Today's Collection"}</p>
                         </div>
                     </div>
                     ${done ? `<div class="val-badge" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">${done.qty} L</div>` : '<i class="bi bi-chevron-right" style="color: var(--text-sub);"></i>'}
@@ -1977,7 +1988,8 @@
             });
 
             if (list.innerHTML === '') {
-                list.innerHTML = `<p style="text-align: center; padding: 40px; color: var(--text-sub);">No farmers in this list.</p>`;
+                const msg = appState.collFilter === 'remaining' ? 'All farmers completed!' : 'No entries done yet.';
+                list.innerHTML = `<p style="text-align: center; padding: 40px; color: var(--text-sub);">${msg}</p>`;
             }
         }
 
