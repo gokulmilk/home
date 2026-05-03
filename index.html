@@ -1140,10 +1140,11 @@
 
             <div class="ledger-table-card" style="border: 1px solid #ddd;">
                 <div class="table-responsive" style="overflow-x: auto;">
-                    <table style="min-width: 1200px; border-collapse: collapse; text-align: center;"
+                    <table style="width: 100%; border-collapse: collapse; text-align: center;"
                         id="farmer-report-matrix">
+                        <thead id="farmer-report-matrix-head"></thead>
                         <tbody id="farmer-report-matrix-body">
-                            <!-- Rows built dynamically: Day, Time, Qty, Fat -->
+                            <!-- Rows built dynamically -->
                         </tbody>
                     </table>
                 </div>
@@ -2034,21 +2035,27 @@
             const now = new Date();
             const monthName = now.toLocaleDateString('en-IN', { month: 'short' });
             const year = now.getFullYear();
+            const month = now.getMonth();
             document.getElementById('report-month-year').innerText = now.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
 
+            const head = document.getElementById('farmer-report-matrix-head');
             const body = document.getElementById('farmer-report-matrix-body');
+            
+            // Header Row
+            head.innerHTML = `
+                <tr>
+                    <th style="border: 1px solid #ddd; padding: 10px; background: #f8fafc; position: sticky; top: 0;">Date</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; background: #f8fafc; position: sticky; top: 0;">Shift</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; background: #f8fafc; position: sticky; top: 0;">Qty (L)</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; background: #f8fafc; position: sticky; top: 0;">Fat (%)</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; background: #f8fafc; position: sticky; top: 0;">Amt (₹)</th>
+                </tr>
+            `;
             body.innerHTML = '';
 
             try {
                 const entries = await apiFetch(`/entries/farmer/${f._id}`);
-                const daysInMonth = new Date(year, now.getMonth() + 1, 0).getDate();
-
-                // Create the 5 rows (simplified for now, same UI structure)
-                let rowDay = '<tr style="background: #f8fafc;"><td style="border: 1px solid #ddd; padding: 10px; font-weight: 800; position: sticky; left: 0; background: #f8fafc;">day</td>';
-                let rowTime = '<tr style="background: #fff;"><td style="border: 1px solid #ddd; padding: 10px; font-weight: 800; position: sticky; left: 0; background: #fff;">time</td>';
-                let rowQty = '<tr style="background: #fff;"><td style="border: 1px solid #ddd; padding: 10px; font-weight: 800; position: sticky; left: 0; background: #fff;">milk quantity</td>';
-                let rowFat = '<tr style="background: #fff;"><td style="border: 1px solid #ddd; padding: 10px; font-weight: 800; position: sticky; left: 0; background: #fff;">fat</td>';
-                let rowCost = '<tr style="background: #f1f5f9;"><td style="border: 1px solid #ddd; padding: 10px; font-weight: 800; position: sticky; left: 0; background: #f1f5f9;">amount (₹)</td>';
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
 
                 let totalQty = 0;
                 let totalFat = 0;
@@ -2057,37 +2064,42 @@
                 const ratePerFat = appState.costPerFat || 0;
 
                 for (let d = 1; d <= daysInMonth; d++) {
-                    const dateStr = `${year}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-                    const displayDate = `${String(d).padStart(2, '0')}-${monthName}`;
-
-                    rowDay += `<td colspan="2" style="border: 1px solid #ddd; padding: 8px; font-weight: 700; background: #f1f5f9;">${displayDate}</td>`;
+                    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                    const displayDate = `${d} ${monthName}`;
 
                     ['morning', 'evening'].forEach(shift => {
                         const entry = entries.find(e => e.date === dateStr && e.shift === shift);
-                        rowTime += `<td style="border: 1px solid #ddd; padding: 6px; font-size: 0.75rem; color: var(--text-sub);">${shift}</td>`;
+                        const row = document.createElement('tr');
+                        row.style.background = shift === 'morning' ? '#fff' : '#f9fafb';
+                        
+                        let qtyCell = '<td style="border: 1px solid #ddd; padding: 8px; color: #ccc;">-</td>';
+                        let fatCell = '<td style="border: 1px solid #ddd; padding: 8px; color: #ccc;">-</td>';
+                        let costCell = '<td style="border: 1px solid #ddd; padding: 8px; color: #ccc;">-</td>';
 
                         if (entry) {
                             totalQty += entry.qty;
-                            rowQty += `<td style="border: 1px solid #ddd; padding: 8px; font-weight: 700; color: var(--primary);">${entry.qty}</td>`;
+                            qtyCell = `<td style="border: 1px solid #ddd; padding: 8px; font-weight: 700; color: var(--primary);">${entry.qty}</td>`;
                             if (entry.fat) {
                                 totalFat += entry.fat;
                                 fatEntries++;
-                                rowFat += `<td style="border: 1px solid #ddd; padding: 8px; font-weight: 700; color: var(--accent);">${entry.fat}</td>`;
+                                fatCell = `<td style="border: 1px solid #ddd; padding: 8px; font-weight: 700; color: var(--accent);">${entry.fat}</td>`;
                                 const cost = entry.qty * entry.fat * ratePerFat;
                                 totalCost += cost;
-                                rowCost += `<td style="border: 1px solid #ddd; padding: 8px; font-weight: 700; color: #1D6F42;">${cost.toFixed(1)}</td>`;
-                            } else {
-                                rowFat += `<td style="border: 1px solid #ddd; padding: 8px; color: #ccc;">-</td>`;
-                                rowCost += `<td style="border: 1px solid #ddd; padding: 8px; color: #ccc;">-</td>`;
+                                costCell = `<td style="border: 1px solid #ddd; padding: 8px; font-weight: 700; color: #1D6F42;">${cost.toFixed(1)}</td>`;
                             }
-                        } else {
-                            rowQty += `<td style="border: 1px solid #ddd; padding: 8px; color: #eee;">-</td>`;
-                            rowFat += `<td style="border: 1px solid #ddd; padding: 8px; color: #eee;">-</td>`;
-                            rowCost += `<td style="border: 1px solid #ddd; padding: 8px; color: #eee;">-</td>`;
                         }
+
+                        row.innerHTML = `
+                            <td style="border: 1px solid #ddd; padding: 8px; font-weight: 600;">${displayDate}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; font-size: 0.8rem; color: var(--text-sub); text-transform: capitalize;">${shift}</td>
+                            ${qtyCell}
+                            ${fatCell}
+                            ${costCell}
+                        `;
+                        body.appendChild(row);
                     });
                 }
-                body.innerHTML = rowDay + rowTime + rowQty + rowFat + rowCost + '</tr>';
+                
                 document.getElementById('report-total-qty').innerText = totalQty.toFixed(1) + ' L';
                 document.getElementById('report-avg-fat').innerText = (fatEntries > 0 ? (totalFat / fatEntries).toFixed(1) : '0.0') + '%';
                 document.getElementById('report-total-cost').innerText = '₹' + Math.round(totalCost);
@@ -2103,53 +2115,45 @@
             const now = new Date();
             const monthName = now.toLocaleDateString('en-IN', { month: 'short' });
             const year = now.getFullYear();
-            const daysInMonth = new Date(year, now.getMonth() + 1, 0).getDate();
+            const month = now.getMonth();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-            // Row strings for CSV
-            let csvDays = "day,";
-            let csvTimes = "time,";
-            let csvQty = "milk quantity,";
-            let csvFat = "fat,";
-            let csvAmount = "amount (INR),";
+            let csvContent = "data:text/csv;charset=utf-8," +
+                `Farmer Monthly Report: ${f.name} (${now.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })})\n` +
+                `Rate per Fat: ${appState.costPerFat || 0}\n\n` +
+                "Date,Shift,Quantity (L),Fat (%),Amount (INR)\n";
+
             const ratePerFat = appState.costPerFat || 0;
 
-            for (let d = 1; d <= daysInMonth; d++) {
-                const dateStr = `${year}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-                const displayDate = `${String(d).padStart(2, '0')}-${monthName}`;
+            // Since entries are already fetched in renderFarmerReport, we should probably reuse them or fetch again.
+            // For now, let's assume we need to fetch or use a local cache.
+            // Simplest is to fetch again if needed, but usually this is called after viewing.
+            
+            // To make it robust, we'll use a fetch-and-download pattern.
+            apiFetch(`/entries/farmer/${f._id}`).then(entries => {
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                    const displayDate = `${d} ${monthName}`;
 
-                csvDays += `${displayDate},,`; // Double column for morning/evening
-                csvTimes += "morning,evening,";
-
-                ['morning', 'evening'].forEach(shift => {
-                    const entry = appState.entries.find(e => e.farmerId === f.id && e.date === dateStr && e.shift === shift);
-                    if (entry) {
-                        csvQty += `${entry.qty},`;
-                        csvFat += `${entry.fat || '-'},`;
-                        if (entry.fat) {
-                            csvAmount += `${(entry.qty * entry.fat * ratePerFat).toFixed(2)},`;
+                    ['morning', 'evening'].forEach(shift => {
+                        const entry = entries.find(e => e.date === dateStr && e.shift === shift);
+                        if (entry) {
+                            const amt = entry.fat ? (entry.qty * entry.fat * ratePerFat).toFixed(2) : '-';
+                            csvContent += `${displayDate},${shift},${entry.qty},${entry.fat || '-'},${amt}\n`;
                         } else {
-                            csvAmount += "-,";
+                            csvContent += `${displayDate},${shift},-,-,-\n`;
                         }
-                    } else {
-                        csvQty += "-,";
-                        csvFat += "-,";
-                        csvAmount += "-,";
-                    }
-                });
-            }
+                    });
+                }
 
-            const csvContent = "data:text/csv;charset=utf-8," +
-                `Farmer Monthly Report: ${f.name} (${now.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })})\n` +
-                `Rate per Fat: ${ratePerFat}\n\n` +
-                csvDays + "\n" + csvTimes + "\n" + csvQty + "\n" + csvFat + "\n" + csvAmount + "\n";
-
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `${f.name.replace(/\s+/g, '_')}_Monthly_Statement.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", `${f.name.replace(/\s+/g, '_')}_Monthly_Statement.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
         }
 
         async function editFat(entryId) {
