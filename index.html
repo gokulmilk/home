@@ -1047,7 +1047,7 @@
                     <input type="date" id="ledger-date-filter" onchange="renderLedger()"
                         style="padding: 8px; border-radius: 8px; border: 1px solid var(--bg-page); font-size: 0.8rem; background: var(--bg-page);">
                     <button class="edit-fat-btn" style="padding: 8px 12px; font-size: 0.8rem;"
-                        onclick="generateMonthly()">
+                        onclick="generateMonthlyMaster()">
                         <i class="bi bi-calculator"></i>
                     </button>
                 </div>
@@ -1067,6 +1067,31 @@
                         </thead>
                         <tbody id="ledger-body">
                             <!-- Rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- MASTER REGISTER VIEW -->
+        <div id="view-master-register" class="view">
+            <header class="header-main" style="padding: 20px 0;">
+                <button onclick="switchView('ledger')"
+                    style="background: none; border: none; font-size: 1.5rem; color: var(--primary); cursor: pointer; padding: 0 10px 0 0;">
+                    <i class="bi bi-arrow-left"></i>
+                </button>
+                <div class="greeting">
+                    <h1 data-i18n="master_register">Monthly Register</h1>
+                    <p data-i18n="full_overview">Complete monthly overview</p>
+                </div>
+            </header>
+
+            <div class="ledger-table-card" style="border: 1px solid #ddd;">
+                <div class="table-responsive" style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: center;">
+                        <thead id="register-head"></thead>
+                        <tbody id="monthly-master-body">
+                            <!-- Rows built dynamically: Farmers (Rows) vs Dates (Cols) -->
                         </tbody>
                     </table>
                 </div>
@@ -2208,48 +2233,62 @@
             }
         }
 
-        function generateMonthlyMaster() {
+        async function generateMonthlyMaster() {
+            switchView('master-register');
             const head = document.getElementById('register-head');
             const body = document.getElementById('monthly-master-body');
 
             const activeFarmers = appState.farmers.filter(f => f.active);
             if (activeFarmers.length === 0) return alert("No active farmers found.");
 
-            // Create Headers
-            let headerHtml = `<tr><th>Date</th>`;
-            activeFarmers.forEach(f => {
-                headerHtml += `<th colspan="2" style="text-align:center; border-left: 2px solid var(--bg-page);">${f.name}</th>`;
-            });
-            headerHtml += `</tr><tr><th></th>`;
-            activeFarmers.forEach(f => {
-                headerHtml += `<th style="font-size:0.6rem; border-left: 2px solid var(--bg-page);">AM</th><th style="font-size:0.6rem;">PM</th>`;
-            });
-            headerHtml += `</tr>`;
-            head.innerHTML = headerHtml;
-
-            // Create 31 Rows
             const now = new Date();
             const year = now.getFullYear();
             const month = now.getMonth();
+            const monthName = now.toLocaleDateString('en-IN', { month: 'short' });
             const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-            let bodyHtml = '';
+            // Create Headers (Dates)
+            let headerRow1 = `<tr><th rowspan="2" style="border: 1px solid #ddd; padding: 10px; background: #f8fafc; position: sticky; left: 0; z-index: 2;">Farmer Name</th>`;
+            let headerRow2 = `<tr>`;
+            
             for (let d = 1; d <= daysInMonth; d++) {
-                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-                bodyHtml += `<tr><td style="font-weight:700;">${d} ${new Date(year, month, d).toLocaleDateString('en-IN', { month: 'short' })}</td>`;
-
-                activeFarmers.forEach(f => {
-                    const am = appState.entries.find(e => e.farmerId === f.id && e.date === dateStr && e.shift === 'morning');
-                    const pm = appState.entries.find(e => e.farmerId === f.id && e.date === dateStr && e.shift === 'evening');
-
-                    bodyHtml += `<td style="border-left: 1px solid var(--bg-page);">${am ? am.qty : '-'}</td>`;
-                    bodyHtml += `<td>${pm ? pm.qty : '-'}</td>`;
-                });
-                bodyHtml += `</tr>`;
+                headerRow1 += `<th colspan="2" style="border: 1px solid #ddd; padding: 8px; background: #f1f5f9; min-width: 80px;">${d} ${monthName}</th>`;
+                headerRow2 += `<th style="border: 1px solid #ddd; padding: 4px; font-size: 0.6rem; background: #fff;">AM</th><th style="border: 1px solid #ddd; padding: 4px; font-size: 0.6rem; background: #fff;">PM</th>`;
             }
-            body.innerHTML = bodyHtml;
+            headerRow1 += `</tr>`;
+            headerRow2 += `</tr>`;
+            head.innerHTML = headerRow1 + headerRow2;
 
-            alert("Detailed Monthly Register Loaded!");
+            // Fetch all entries for this month (for all farmers)
+            // Note: We'll just use the current month's entries if they were already loaded, 
+            // but for a full register, we should fetch the whole month.
+            try {
+                // Fetching monthly data for everyone
+                const monthStart = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+                // Simple approach: entries for each day might be too many requests.
+                // Better: Backend should have a "monthly summary" route.
+                // For now, we'll rely on the appState.entries (today) and maybe we should fetch the month.
+                const entries = await apiFetch(`/entries?month=${month + 1}&year=${year}`);
+
+                let bodyHtml = '';
+                activeFarmers.forEach(f => {
+                    bodyHtml += `<tr><td style="border: 1px solid #ddd; padding: 10px; font-weight: 700; position: sticky; left: 0; background: #fff; text-align: left; box-shadow: 2px 0 5px rgba(0,0,0,0.05);">${f.name}</td>`;
+                    
+                    for (let d = 1; d <= daysInMonth; d++) {
+                        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                        const am = entries.find(e => e.farmer._id === f._id && e.date === dateStr && e.shift === 'morning');
+                        const pm = entries.find(e => e.farmer._id === f._id && e.date === dateStr && e.shift === 'evening');
+
+                        bodyHtml += `<td style="border: 1px solid #ddd; padding: 8px; color: ${am ? 'var(--primary)' : '#ccc'};">${am ? am.qty : '-'}</td>`;
+                        bodyHtml += `<td style="border: 1px solid #ddd; padding: 8px; color: ${pm ? 'var(--accent)' : '#ccc'};">${pm ? pm.qty : '-'}</td>`;
+                    }
+                    bodyHtml += `</tr>`;
+                });
+                body.innerHTML = bodyHtml;
+            } catch (err) {
+                console.error(err);
+                alert("Failed to load monthly data");
+            }
         }
 
         function updateShift(shift) {
