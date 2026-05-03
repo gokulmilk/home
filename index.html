@@ -2039,16 +2039,18 @@
             appState.farmers.forEach(f => {
                 const item = document.createElement('div');
                 item.className = 'list-item';
+                item.style.padding = '12px 16px';
                 item.innerHTML = `
-                    <div class="meta" onclick="openFarmerReport('${f._id}')" style="cursor: pointer; flex: 1;">
+                    <div class="meta" onclick="openFarmerReport('${f._id}')" style="cursor: pointer; flex: 1; display: flex; align-items: center; gap: 12px;">
                         <div class="icon-box"><i class="bi bi-person"></i></div>
                         <div class="details">
-                            <h4>${f.name}</h4>
-                            <p>${f.mobile || ''}</p>
+                            <h4 style="margin:0; font-size: 1rem;">${f.name}</h4>
+                            <p style="margin:0; font-size: 0.75rem; color: var(--text-sub);">${f.mobile || ''}</p>
                         </div>
                     </div>
-                    <div class="switch-box" onclick="toggleFarmer('${f._id}')" style="padding-left: 10px;">
-                        <i class="bi ${f.active ? 'bi-toggle-on' : 'bi-toggle-off'}" style="font-size: 1.8rem; color: ${f.active ? 'var(--primary)' : 'var(--text-sub)'};"></i>
+                    <div class="switch-box" onclick="toggleFarmer('${f._id}')" style="padding: 10px; cursor: pointer; display: flex; align-items: center;">
+                        <i class="bi ${f.active ? 'bi-toggle-on' : 'bi-toggle-off'}" 
+                           style="font-size: 2rem; color: ${f.active ? 'var(--primary)' : '#cbd5e1'}; transition: all 0.2s;"></i>
                     </div>
                 `;
                 list.appendChild(item);

@@ -39,7 +39,7 @@ router.post('/', auth, async (req, res) => {
 // @route   PUT api/farmers/:id
 // @desc    Update farmer (active status, name, etc.)
 router.put('/:id', auth, async (req, res) => {
-    const { name, fat, active } = req.body;
+    const { name, mobile, fat, active } = req.body;
 
     try {
         let farmer = await Farmer.findById(req.params.id);
