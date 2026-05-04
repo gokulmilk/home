@@ -1310,20 +1310,87 @@
                     <span id="current-lang-display"
                         style="font-size: 0.8rem; color: var(--text-sub); font-weight: 700;">English</span>
                 </div>
-                <div class="settings-item">
+                <div class="settings-item" onclick="switchView('security')">
                     <div class="info">
                         <i class="bi bi-shield-lock-fill"></i>
                         <span data-i18n="security">Security & Privacy</span>
                     </div>
                     <i class="bi bi-chevron-right" style="font-size: 0.8rem; color: var(--text-sub);"></i>
                 </div>
-                <div class="settings-item">
+                <div class="settings-item" onclick="switchView('help')">
                     <div class="info">
                         <i class="bi bi-question-circle-fill"></i>
                         <span data-i18n="help">Help Center</span>
                     </div>
                     <i class="bi bi-chevron-right" style="font-size: 0.8rem; color: var(--text-sub);"></i>
                 </div>
+            </div>
+        </div>
+
+        <!-- SECURITY VIEW -->
+        <div id="view-security" class="view">
+            <header class="header-main" style="padding: 20px 0;">
+                <button onclick="switchView('settings')"
+                    style="background: none; border: none; font-size: 1.5rem; color: var(--primary); cursor: pointer; padding: 0 10px 0 0;">
+                    <i class="bi bi-arrow-left"></i>
+                </button>
+                <div class="greeting">
+                    <h1 data-i18n="security_privacy">Security & Privacy</h1>
+                    <p data-i18n="security">Manage your account security</p>
+                </div>
+            </header>
+
+            <div class="settings-list">
+                <div style="padding: 0 20px;">
+                    <h3 style="font-size: 1rem; margin-bottom: 16px;" data-i18n="change_password">Change Password</h3>
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label data-i18n="current_password">Current Password</label>
+                        <input type="password" id="sec-curr-pass" class="auth-input" style="padding-left: 16px;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label data-i18n="new_password">New Password</label>
+                        <input type="password" id="sec-new-pass" class="auth-input" style="padding-left: 16px;">
+                    </div>
+                    <button class="btn-full" onclick="updatePassword()" data-i18n="update_password">Update Password</button>
+                </div>
+
+                <div style="margin-top: 32px; padding: 20px; background: rgba(var(--primary-rgb), 0.03); border-radius: 20px;">
+                    <h3 style="font-size: 0.9rem; margin-bottom: 8px;" data-i18n="privacy_policy">Privacy Policy</h3>
+                    <p style="font-size: 0.8rem; color: var(--text-sub); line-height: 1.5;" data-i18n="data_usage">Your data is stored securely and never shared with third parties.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- HELP VIEW -->
+        <div id="view-help" class="view">
+            <header class="header-main" style="padding: 20px 0;">
+                <button onclick="switchView('settings')"
+                    style="background: none; border: none; font-size: 1.5rem; color: var(--primary); cursor: pointer; padding: 0 10px 0 0;">
+                    <i class="bi bi-arrow-left"></i>
+                </button>
+                <div class="greeting">
+                    <h1 data-i18n="help_center">Help Center</h1>
+                    <p data-i18n="help">Get help and support</p>
+                </div>
+            </header>
+
+            <div class="settings-list" style="padding: 0 20px;">
+                <div class="faq-item" style="margin-bottom: 24px;">
+                    <h3 style="font-size: 0.95rem; margin-bottom: 6px;" data-i18n="how_to_add_farmer">How to add a farmer?</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-sub);" data-i18n="add_farmer_instruction">Go to the Farmers tab and click 'New Farmer'.</p>
+                </div>
+                <div class="faq-item" style="margin-bottom: 24px;">
+                    <h3 style="font-size: 0.95rem; margin-bottom: 6px;" data-i18n="how_to_export">How to export data?</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-sub);" data-i18n="export_instruction">Go to any farmer's report and click 'Export to Excel'.</p>
+                </div>
+
+                <div style="margin-top: 32px;">
+                    <button class="btn-full" onclick="window.open('https://wa.me/911234567890')" style="background: #25D366; border: none;">
+                        <i class="bi bi-whatsapp"></i> <span data-i18n="contact_support">Contact Support</span>
+                    </button>
+                </div>
+
+                <p style="text-align: center; margin-top: 40px; font-size: 0.75rem; color: var(--text-sub);" data-i18n="app_version">App Version: v2.1.0</p>
             </div>
         </div>
 
@@ -1511,8 +1578,22 @@
                 morning: "Morning",
                 evening: "Evening",
                 today_collection: "Today's Collection",
-                total: "Total",
-                avg: "Average"
+                avg: "Average",
+                security_privacy: "Security & Privacy",
+                help_center: "Help Center",
+                change_password: "Change Password",
+                current_password: "Current Password",
+                new_password: "New Password",
+                update_password: "Update Password",
+                privacy_policy: "Privacy Policy",
+                data_usage: "Your data is stored securely and never shared with third parties.",
+                contact_support: "Contact Support",
+                faq: "Frequently Asked Questions",
+                how_to_add_farmer: "How to add a farmer?",
+                add_farmer_instruction: "Go to the Farmers tab and click 'New Farmer'.",
+                how_to_export: "How to export data?",
+                export_instruction: "Go to any farmer's report and click 'Export to Excel'.",
+                app_version: "App Version: v2.1.0"
             },
             hi: {
                 home: "होम",
@@ -1593,7 +1674,22 @@
                 evening: "शाम",
                 today_collection: "आज का कलेक्शन",
                 total: "कुल",
-                avg: "औसत"
+                avg: "औसत",
+                security_privacy: "सुरक्षा और गोपनीयता",
+                help_center: "सहायता केंद्र",
+                change_password: "पासवर्ड बदलें",
+                current_password: "वर्तमान पासवर्ड",
+                new_password: "नया पासवर्ड",
+                update_password: "पासवर्ड अपडेट करें",
+                privacy_policy: "गोपनीयता नीति",
+                data_usage: "आपका डेटा सुरक्षित रूप से संग्रहीत है और कभी भी तीसरे पक्ष के साथ साझा नहीं किया जाता है।",
+                contact_support: "सहायता के लिए संपर्क करें",
+                faq: "अक्सर पूछे जाने वाले प्रश्न",
+                how_to_add_farmer: "किसान को कैसे जोड़ें?",
+                add_farmer_instruction: "किसान टैब पर जाएं और 'नया किसान' पर क्लिक करें।",
+                how_to_export: "डेटा एक्सपोर्ट कैसे करें?",
+                export_instruction: "किसी भी किसान की रिपोर्ट पर जाएं और 'एक्सेल में एक्सपोर्ट करें' पर क्लिक करें।",
+                app_version: "ऐप वर्जन: v2.1.0"
             }
         };
 
