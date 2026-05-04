@@ -63,4 +63,24 @@ router.put('/:id', auth, async (req, res) => {
     }
 });
 
+// @route   DELETE api/farmers/:id
+// @desc    Delete farmer
+router.delete('/:id', auth, async (req, res) => {
+    try {
+        let farmer = await Farmer.findById(req.params.id);
+        if (!farmer) return res.status(404).json({ msg: 'Farmer not found' });
+
+        // Make sure user owns farmer
+        if (farmer.user.toString() !== req.user.id) {
+            return res.status(401).json({ msg: 'User not authorized' });
+        }
+
+        await Farmer.findByIdAndDelete(req.params.id);
+        res.json({ msg: 'Farmer removed' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ msg: 'Server Error' });
+    }
+});
+
 module.exports = router;

@@ -1617,7 +1617,7 @@
             if (langDisplay) langDisplay.innerText = lang === 'hi' ? 'Hindi' : 'English';
         }
 
-        const BASE_URL = 'https://gokul-3il7.onrender.com/api';
+        const BASE_URL = 'http://localhost:5000/api';
 
         async function apiFetch(endpoint, options = {}) {
             const token = sessionStorage.getItem('dm_pro_token');
